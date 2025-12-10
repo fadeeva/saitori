@@ -1,15 +1,36 @@
-import time
-
+from typing import Literal
+from datetime import datetime
 import numpy as np
 
 
-sellers = 10_000
-buyers = 8_000
-amount = 1_000_000
+class Order:
+    def __init__(self, side:Literal['bid', 'ask'], price:float, volume:int):
+        self.side = side
+        self.volume = volume
+        self.timestamp = datetime.now()
+    
+    def get_data(self)->dict:
+        return {
+            'side': self.side,
+            'volume': self.volume,
+            'timestamp': self.timestamp
+        }
+    
 
-init_price = np.round(np.random.uniform(low=100, high=200), 2)
+class OrderBook:
+    def __init__(self):
+        self.storage = []
+    
+    def add(self, order:Order)->None:
+        self.storage.append(order)
+    
+    def get_all(self)->list:
+        return [obj.get_data() for obj in self.storage]
 
 
-print('BUY |_____| PRICE |_____| SELL')
+order = Order('ask', 123.43, 10)
+order_book = OrderBook()
+order_book.add(order)
 
-print(init_price)
+print(order_book.get_all())
+
