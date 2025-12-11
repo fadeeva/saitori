@@ -1,3 +1,4 @@
+import time
 from typing import Literal
 from datetime import datetime
 import numpy as np
@@ -28,9 +29,21 @@ class OrderBook:
         return [obj.get_data() for obj in self.storage]
 
 
-order = Order('ask', 123.43, 10)
+n=10
+dtype = [('type', 'U3'), ('price', 'f4'), ('quantity', 'i4')]
+
+types = np.random.choice(['bid', 'ask'], n)
+prices = np.round(np.random.uniform(1, 200, n), 2).astype('f4')
+quantities = np.random.randint(1, 100, n).astype('i4')
+
+orders = np.empty(n, dtype=dtype)
+orders['type'] = types
+orders['price'] = prices
+orders['quantity'] = quantities
+
 order_book = OrderBook()
-order_book.add(order)
+for order in orders:
+    order_book.add(Order(*order))
+    time.sleep(np.round(np.random.uniform(.1, 5.), 2))
 
 print(order_book.get_all())
-
