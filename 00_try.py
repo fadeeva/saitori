@@ -3,6 +3,8 @@ from typing import Literal
 from datetime import datetime
 import numpy as np
 
+import pickle as pk
+
 
 class Order:
     def __init__(self, side:Literal['bid', 'ask'], price:float, volume:int):
@@ -29,21 +31,33 @@ class OrderBook:
         return [obj.get_data() for obj in self.storage]
 
 
-n=10
-dtype = [('type', 'U3'), ('price', 'f4'), ('quantity', 'i4')]
+with open('orders', 'rb') as f:
+    orders = pk.load(f)
+    
+print(len(orders))
 
-types = np.random.choice(['bid', 'ask'], n)
-prices = np.round(np.random.uniform(1, 200, n), 2).astype('f4')
-quantities = np.random.randint(1, 100, n).astype('i4')
 
-orders = np.empty(n, dtype=dtype)
-orders['type'] = types
-orders['price'] = prices
-orders['quantity'] = quantities
-
-order_book = OrderBook()
-for order in orders:
-    order_book.add(Order(*order))
-    time.sleep(np.round(np.random.uniform(.1, 5.), 2))
-
-print(order_book.get_all())
+# Generate Orders
+#n=1_000
+#dtype = [('type', 'U3'), ('price', 'f4'), ('quantity', 'i4')]
+#
+#types = np.random.choice(['bid', 'ask'], n)
+#prices = np.round(np.random.uniform(1, 200, n), 2).astype('f4')
+#quantities = np.random.randint(1, 100, n).astype('i4')
+#
+#orders = np.empty(n, dtype=dtype)
+#orders['type'] = types
+#orders['price'] = prices
+#orders['quantity'] = quantities
+#
+#order_book = OrderBook()
+#for order in orders:
+#    order_book.add(Order(*order))
+#    time.sleep(np.round(np.random.uniform(.1, 2.), 2))
+#
+#
+#orders_list = order_book.get_all()
+#
+#with open('orders', 'wb') as f:
+#    pk.dump(orders_list, f)
+    
