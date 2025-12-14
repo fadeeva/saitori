@@ -28,7 +28,7 @@ class OrderBook:
         self.asks = []
         self.bids = []
     
-    def add(self, order:Order)->None:
+    def add(self, order:tuple)->None:
         if order['side']=='ask':
             self.asks.append(order)
         else:
@@ -44,13 +44,12 @@ class OrderBook:
 with open('orders', 'rb') as f:
     orders = pk.load(f)
 
-print(orders[0])
-    
-#order_book = OrderBook()
-#order_book.add(orders[0])
-#
+keys = ['side', 'price', 'volume', 'timestamp']
+order_book = OrderBook()
+for order in orders:
+    order_book.add(dict(zip(keys, order)))
+
 #print(order_book.get_asks())
-#print(order_book.get_bids())
 
 
 # Generate Orders
