@@ -28,17 +28,27 @@ class OrderBook:
         self.asks = []
         self.bids = []
     
-    def add(self, order:tuple)->None:
+    def add(self, order:dict)->None:
         if order['side']=='ask':
             self.asks.append(order)
         else:
             self.bids.append(order)
     
     def get_asks(self)->list:
-        return self.asks
+        sorted_asks = sorted(self.asks, key=lambda order: (order['price'], order['timestamp']))
+        return sorted_asks
     
     def get_bids(self)->list:
-        return self.bids
+        sorted_bids = sorted(self.bids, key=lambda order: (order['price'], order['timestamp']), reverse=True)
+        return sorted_bids
+    
+    def get_best_ask(self)->float:
+        return self.get_asks()[0]
+    
+    def get_best_bid(self)->float:
+        return self.get_bids()[0]
+    
+    
 
 
 with open('orders', 'rb') as f:
@@ -49,7 +59,8 @@ order_book = OrderBook()
 for order in orders:
     order_book.add(dict(zip(keys, order)))
 
-#print(order_book.get_asks())
+print(order_book.get_best_ask())
+print(order_book.get_best_bid())
 
 
 # Generate Orders
