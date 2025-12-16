@@ -21,18 +21,49 @@ class Order:
             'volume': self.volume,
             'timestamp': self.timestamp
         }
-    
 
+    
+class OrdersStack:
+    def __init__(self, side:Literal['bid', 'ask']):
+        self.side = side
+        self.top = None
+        self.stack = np.array([])
+    
+    def peek(self):
+        return self.top
+    
+    def push(self, order:Order):
+        if order.get_data()['side'] != self.side: return
+        
+        data = order.get_data()
+        if self.top:
+            if self.side=='ask' and self.top['price'] > data['price']:
+                for o in self.stack:
+                    if o.get_data()['price'] < data['price']:
+                        idx = np.searchsorted(self.stack, o)
+                        np.insert(self.stack, idx, order)
+            else:
+                self.stack = np.append(self.stack, [order])
+                self.top = order.get_data()
+        else:
+            self.stack = np.append(self.stack, [order])
+            self.top = order.get_data()
+    
+    def show_all(self):
+        return [o.get_data() for o in self.stack]
+            
+        
+        
 class OrderBook:
     def __init__(self):
-        self.asks = []
-        self.bids = []
+        self.asks = OrdersStack('ask')
+        self.bids = OrdersStack('bid')
     
-    def add(self, order:dict)->None:
+    def add(self, order:Order)->None:
         if order['side']=='ask':
-            self.asks.append(order)
+            self.asks.push(order)
         else:
-            self.bids.append(order)
+            self.bids.push(order)
     
     def get_asks(self)->list:
         sorted_asks = sorted(self.asks, key=lambda order: (order['price'], order['timestamp']))
@@ -43,24 +74,33 @@ class OrderBook:
         return sorted_bids
     
     def get_best_ask(self)->float:
-        return self.get_asks()[0]
+        return self.asks.peek()
     
     def get_best_bid(self)->float:
-        return self.get_bids()[0]
+        return self.bids.peek()
     
     
+order_stack = OrdersStack('ask')
 
+order = Order('ask', 123.32, 23)
+order_stack.push(order)
+time.sleep(1)
+order = Order('ask', 225.90, 23)
+order_stack.push(order)
 
-with open('orders', 'rb') as f:
-    orders = pk.load(f)
+print(order_stack.show_all())    
+    
 
-keys = ['side', 'price', 'volume', 'timestamp']
-order_book = OrderBook()
-for order in orders:
-    order_book.add(dict(zip(keys, order)))
-
-print(order_book.get_best_ask())
-print(order_book.get_best_bid())
+#with open('orders', 'rb') as f:
+#    orders = pk.load(f)
+#
+#keys = ['side', 'price', 'volume', 'timestamp']
+#order_book = OrderBook()
+#for order in orders:
+#    order_book.add(dict(zip(keys, order)))
+#
+#print(order_book.get_best_ask())
+#print(order_book.get_best_bid())
 
 
 # Generate Orders
