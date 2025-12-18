@@ -22,7 +22,7 @@ class Order:
             'timestamp': self.timestamp
         }
 
-    
+
 class OrdersStack:
     def __init__(self, side:Literal['bid', 'ask']):
         self.side = side
@@ -41,7 +41,8 @@ class OrdersStack:
                 for o in self.stack:
                     if o.get_data()['price'] < data['price']:
                         idx = np.searchsorted(self.stack, o)
-                        np.insert(self.stack, idx, order)
+                        self.stack = np.insert(self.stack, idx, order)
+                        break
             else:
                 self.stack = np.append(self.stack, [order])
                 self.top = order.get_data()
@@ -51,13 +52,28 @@ class OrdersStack:
     
     def show_all(self):
         return [o.get_data() for o in self.stack]
-            
-        
+
+
+class AskOrders(OrdersStack):
+    def __init__(self):
+        super().__init__()
+    
+    def push(self):
+        pass
+    
+
+class BidOrders(OrdersStack):
+    def __init__(self):
+        super().__init__()
+    
+    def push(self):
+        pass
+
         
 class OrderBook:
     def __init__(self):
-        self.asks = OrdersStack('ask')
-        self.bids = OrdersStack('bid')
+        self.asks = AskOrders()
+        self.bids = BidOrders()
     
     def add(self, order:Order)->None:
         if order['side']=='ask':
@@ -65,13 +81,13 @@ class OrderBook:
         else:
             self.bids.push(order)
     
-    def get_asks(self)->list:
-        sorted_asks = sorted(self.asks, key=lambda order: (order['price'], order['timestamp']))
-        return sorted_asks
-    
-    def get_bids(self)->list:
-        sorted_bids = sorted(self.bids, key=lambda order: (order['price'], order['timestamp']), reverse=True)
-        return sorted_bids
+#    def get_asks(self)->list:
+#        sorted_asks = sorted(self.asks, key=lambda order: (order['price'], order['timestamp']))
+#        return sorted_asks
+#    
+#    def get_bids(self)->list:
+#        sorted_bids = sorted(self.bids, key=lambda order: (order['price'], order['timestamp']), reverse=True)
+#        return sorted_bids
     
     def get_best_ask(self)->float:
         return self.asks.peek()
