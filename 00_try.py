@@ -24,49 +24,64 @@ class Order:
 
 
 class OrdersStack:
-    def __init__(self, side:Literal['bid', 'ask']):
-        self.side = side
+    def __init__(self):
         self.top = None
         self.stack = np.array([])
     
     def peek(self):
         return self.top
     
-    def push(self, order:Order):
-        if order.get_data()['side'] != self.side: return
-        
-        data = order.get_data()
-        if self.top:
-            if self.side=='ask' and self.top['price'] > data['price']:
-                for o in self.stack:
-                    if o.get_data()['price'] < data['price']:
-                        idx = np.searchsorted(self.stack, o)
-                        self.stack = np.insert(self.stack, idx, order)
-                        break
-            else:
-                self.stack = np.append(self.stack, [order])
-                self.top = order.get_data()
-        else:
-            self.stack = np.append(self.stack, [order])
-            self.top = order.get_data()
+#    def push(self, order:Order):
+#        if order.get_data()['side'] != self.side: return
+#        
+#        data = order.get_data()
+#        if self.top:
+#            if self.side=='ask' and self.top['price'] > data['price']:
+#                for o in self.stack:
+#                    if o.get_data()['price'] < data['price']:
+#                        idx = np.searchsorted(self.stack, o)
+#                        self.stack = np.insert(self.stack, idx, order)
+#                        break
+#            else:
+#                self.stack = np.append(self.stack, [order])
+#                self.top = order.get_data()
+#        else:
+#            self.stack = np.append(self.stack, [order])
+#            self.top = order.get_data()
     
-    def show_all(self):
+    def show(self):
         return [o.get_data() for o in self.stack]
 
 
+# from lowest to highest 
 class AskOrders(OrdersStack):
     def __init__(self):
         super().__init__()
     
-    def push(self):
-        pass
+    def push(self, order: Order)->None:
+        if self.top:
+            pass
+        else:
+            self.stack = np.append(self.stack, [order])
+            self.top = self.stack[-1].get_data()
     
 
+#order = Order('ask', 123.32, 23)
+order = Order('ask', 225.90, 23)
+
+ask = AskOrders()
+ask.push(order)
+print(ask.show())
+print(ask.peek())
+
+
+
+# from highest to lowest
 class BidOrders(OrdersStack):
     def __init__(self):
         super().__init__()
     
-    def push(self):
+    def push(self, order:Order)->None:
         pass
 
         
@@ -95,17 +110,7 @@ class OrderBook:
     def get_best_bid(self)->float:
         return self.bids.peek()
     
-    
-order_stack = OrdersStack('ask')
 
-order = Order('ask', 123.32, 23)
-order_stack.push(order)
-time.sleep(1)
-order = Order('ask', 225.90, 23)
-order_stack.push(order)
-
-print(order_stack.show_all())    
-    
 
 #with open('orders', 'rb') as f:
 #    orders = pk.load(f)
