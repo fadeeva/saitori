@@ -14,7 +14,7 @@ class Order:
         self.price = price
         self.timestamp = datetime.now()
     
-    def get_data(self)->dict:
+    def get(self)->dict:
         return {
             'side': self.side,
             'price': self.price,
@@ -31,26 +31,8 @@ class OrdersStack:
     def peek(self):
         return self.top
     
-#    def push(self, order:Order):
-#        if order.get_data()['side'] != self.side: return
-#        
-#        data = order.get_data()
-#        if self.top:
-#            if self.side=='ask' and self.top['price'] > data['price']:
-#                for o in self.stack:
-#                    if o.get_data()['price'] < data['price']:
-#                        idx = np.searchsorted(self.stack, o)
-#                        self.stack = np.insert(self.stack, idx, order)
-#                        break
-#            else:
-#                self.stack = np.append(self.stack, [order])
-#                self.top = order.get_data()
-#        else:
-#            self.stack = np.append(self.stack, [order])
-#            self.top = order.get_data()
-    
     def show(self):
-        return [o.get_data() for o in self.stack]
+        return self.stack
 
 
 # from lowest to highest 
@@ -60,30 +42,59 @@ class AskOrders(OrdersStack):
     
     def push(self, order: Order)->None:
         if self.top:
-            pass
-        else:
-            self.stack = np.append(self.stack, [order])
-            self.top = self.stack[-1].get_data()
+            for o in self.stack:
+                if o['price'] > order.get()['price']:
+                    self.stack = np.insert(self.stack, np.where(self.stack==o)[0], order.get())
+                    self.top = self.stack[-1]
+                    return
+                    
+        self.stack = np.append(self.stack, [order.get()])
+        self.top = self.stack[-1]
     
 
-#order = Order('ask', 123.32, 23)
-order = Order('ask', 225.90, 23)
-
-ask = AskOrders()
-ask.push(order)
-print(ask.show())
-print(ask.peek())
-
-
+#ask = AskOrders()
+#order = Order('ask', 100, 23)
+#ask.push(order)
+#order = Order('ask', 120, 23)
+#ask.push(order)
+#order = Order('ask', 115, 23)
+#ask.push(order)
+#order = Order('ask', 100, 23)
+#ask.push(order)
+#order = Order('ask', 117, 23)
+#ask.push(order)
+#print(ask.show())
 
 # from highest to lowest
 class BidOrders(OrdersStack):
     def __init__(self):
         super().__init__()
     
-    def push(self, order:Order)->None:
-        pass
+    def push(self, order: Order)->None:
+        if self.top:
+            for o in self.stack:
+                if o['price'] < order.get()['price']:
+                    self.stack = np.insert(self.stack, np.where(self.stack==o)[0], order.get())
+                    self.top = self.stack[-1]
+                    return
+                    
+        self.stack = np.append(self.stack, [order.get()])
+        self.top = self.stack[-1]
+        
 
+bid = BidOrders()
+order = Order('bid', 100, 23)
+bid.push(order)
+order = Order('bid', 120, 23)
+bid.push(order)
+order = Order('bid', 115, 23)
+bid.push(order)
+order = Order('bid', 100, 23)
+bid.push(order)
+order = Order('bid', 117, 23)
+bid.push(order)
+print(bid.show())
+        
         
 class OrderBook:
     def __init__(self):
