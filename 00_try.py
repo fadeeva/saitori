@@ -45,20 +45,14 @@ class AskOrders(OrdersStack):
     
 
 # from highest to lowest
-#class BidOrders(OrdersStack):
-#    def __init__(self):
-#        super().__init__()
-#    
-#    def push(self, order: Order)->None:
-#        if self.top:
-#            for o in self.stack:
-#                if o['price'] < order.get()['price']:
-#                    self.stack = np.insert(self.stack, np.where(self.stack==o)[0], order.get())
-#                    self.top = self.stack[-1]
-#                    return
-#                    
-#        self.stack = np.append(self.stack, [order.get()])
-#        self.top = self.stack[-1]
+class BidOrders(OrdersStack):
+    def __init__(self):
+        super().__init__()
+    
+    def push(self, order: Order)->None:
+        idx = bisect.bisect_right([-o.price for o in self._orders], -order.price)
+        self._orders.insert(idx, order)
+
         
         
 #class OrderBook:
@@ -95,17 +89,18 @@ if __name__ == "__main__":
         ask.push(order)
     print(ask.show())
     
-    #bid = BidOrders()
-    #order = Order('bid', 100, 23)
-    #bid.push(order)
-    #order = Order('bid', 120, 23)
-    #bid.push(order)
-    #order = Order('bid', 115, 23)
-    #bid.push(order)
-    #order = Order('bid', 100, 23)
-    #bid.push(order)
-    #order = Order('bid', 117, 23)
-    #bid.push(order)
-    #print(bid.show())
+    
+    orders = [
+        Order('bid', 100, 23),
+        Order('bid', 120, 23),
+        Order('bid', 115, 23),
+        Order('bid', 100, 23),
+        Order('bid', 117, 23),
+    ]
+    bid = BidOrders()
+    for order in orders:
+        bid.push(order)
+    print(bid.show())
+    
     
     
