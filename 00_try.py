@@ -28,7 +28,7 @@ class OrdersStack:
         self._orders: List[Order] = []
     
     def peek(self)->Optional[Order]:
-        return self._orders[-1] if self._orders else None
+        return self._orders[-1].get() if self._orders else None
     
     def show(self)->List[dict]:
         return [o.get() for o in self._orders]
@@ -54,23 +54,22 @@ class BidOrders(OrdersStack):
         self._orders.insert(idx, order)
 
         
-        
-#class OrderBook:
-#    def __init__(self):
-#        self.asks = AskOrders()
-#        self.bids = BidOrders()
-#    
-#    def add(self, order:Order)->None:
-#        if order['side']=='ask':
-#            self.asks.push(order)
-#        else:
-#            self.bids.push(order)
-#    
-#    def get_best_ask(self)->float:
-#        return self.asks.peek()
-#    
-#    def get_best_bid(self)->float:
-#        return self.bids.peek()
+class OrderBook:
+    def __init__(self):
+        self.asks = AskOrders()
+        self.bids = BidOrders()
+    
+    def add(self, order:Order)->None:
+        if order.side=='ask':
+            self.asks.push(order)
+        else:
+            self.bids.push(order)
+    
+    def get_best_ask(self)->Optional[Order]:
+        return self.asks.peek()
+    
+    def get_best_bid(self)->Optional[Order]:
+        return self.bids.peek()
     
     
 if __name__ == "__main__":
@@ -78,29 +77,24 @@ if __name__ == "__main__":
 #    order = Order('ask', 100, 23)
 #    print(order.get())
     orders = [
+        Order('bid', 117, 23),
         Order('ask', 100, 23),
         Order('ask', 120, 23),
-        Order('ask', 115, 23),
-        Order('ask', 100, 23),
-        Order('ask', 117, 23),
-    ]
-    ask = AskOrders()
-    for order in orders:
-        ask.push(order)
-    print(ask.show())
-    
-    
-    orders = [
-        Order('bid', 100, 23),
         Order('bid', 120, 23),
+        Order('ask', 115, 23),
+        Order('ask', 117, 23),
+        Order('bid', 100, 23),
+        Order('ask', 100, 23),
         Order('bid', 115, 23),
         Order('bid', 100, 23),
-        Order('bid', 117, 23),
+        
     ]
-    bid = BidOrders()
+    book = OrderBook()
     for order in orders:
-        bid.push(order)
-    print(bid.show())
+        book.add(order)
+    print(book.get_best_ask())
+    print(book.get_best_bid())
+
     
     
     
