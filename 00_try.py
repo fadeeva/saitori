@@ -32,6 +32,9 @@ class OrdersStack:
     
     def show(self)->List[dict]:
         return [o.get() for o in self._orders]
+    
+    def select(self, price:float)->Optional[Order]:
+        return [o.get() for o in self._orders if o.get()['price']==price]
 
 
 # from lowest to highest 
@@ -66,10 +69,14 @@ class OrderBook:
             self.bids.push(order)
     
     def get_best_ask(self)->Optional[Order]:
-        return self.asks.peek()
+        price = self.asks.peek()['price']
+        return self.asks.select({'price': price})
     
     def get_best_bid(self)->Optional[Order]:
         return self.bids.peek()
+    
+    def get_price(self, price:float)->Optional[Order]:
+        return [self.asks.select(price), self.bids.select(price)]
     
     
 if __name__ == "__main__":
@@ -78,15 +85,15 @@ if __name__ == "__main__":
 #    print(order.get())
     orders = [
         Order('bid', 117, 23),
-        Order('ask', 100, 23),
-        Order('ask', 120, 23),
-        Order('bid', 120, 23),
-        Order('ask', 115, 23),
-        Order('ask', 117, 23),
-        Order('bid', 100, 23),
-        Order('ask', 100, 23),
-        Order('bid', 115, 23),
-        Order('bid', 100, 23),
+        Order('ask', 100, 49),
+        Order('ask', 120, 12),
+        Order('bid', 120, 8),
+        Order('ask', 115, 21),
+        Order('ask', 117, 19),
+        Order('bid', 100, 11),
+        Order('ask', 100, 5),
+        Order('bid', 115, 5),
+        Order('bid', 100, 10),
         
     ]
     book = OrderBook()
@@ -94,7 +101,9 @@ if __name__ == "__main__":
         book.add(order)
     print(book.get_best_ask())
     print(book.get_best_bid())
-
+    
+    print('=================')
+    print(book.get_price(100))
     
     
     
