@@ -33,8 +33,15 @@ class OrdersStack:
     def show(self)->List[dict]:
         return [o.get() for o in self._orders]
     
-    def select(self, price:float)->Optional[Order]:
-        return [o.get() for o in self._orders if o.get()['price']==price]
+    def select(self, values:dict)->Optional[Order]:
+        answer = {}
+        if self._orders:
+            params = self.peek().keys()
+            for i in values.keys():
+                if i in params:
+                    answer[i] = [o.get() for o in self._orders if o.get()[i]==values[i]]
+        
+        return answer
 
 
 # from lowest to highest 
@@ -42,7 +49,7 @@ class AskOrders(OrdersStack):
     def __init__(self):
         super().__init__()
     
-    def push(self, order: Order)->None:
+    def push(self, order:Order)->None:
         idx = bisect.bisect_right([o.price for o in self._orders], order.price)
         self._orders.insert(idx, order)
     
@@ -52,7 +59,7 @@ class BidOrders(OrdersStack):
     def __init__(self):
         super().__init__()
     
-    def push(self, order: Order)->None:
+    def push(self, order:Order)->None:
         idx = bisect.bisect_right([-o.price for o in self._orders], -order.price)
         self._orders.insert(idx, order)
 
@@ -69,14 +76,13 @@ class OrderBook:
             self.bids.push(order)
     
     def get_best_ask(self)->Optional[Order]:
-        price = self.asks.peek()['price']
-        return self.asks.select({'price': price})
+        return self.bids.peek()
     
     def get_best_bid(self)->Optional[Order]:
         return self.bids.peek()
     
     def get_price(self, price:float)->Optional[Order]:
-        return [self.asks.select(price), self.bids.select(price)]
+        return [self.asks.select({'price': price}), self.bids.select({'price': price})]
     
     
 if __name__ == "__main__":
@@ -99,8 +105,8 @@ if __name__ == "__main__":
     book = OrderBook()
     for order in orders:
         book.add(order)
-    print(book.get_best_ask())
-    print(book.get_best_bid())
+#    print(book.get_best_ask())
+#    print(book.get_best_bid())
     
     print('=================')
     print(book.get_price(100))
