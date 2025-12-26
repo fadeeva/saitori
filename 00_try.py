@@ -1,4 +1,4 @@
-from typing import Literal, List, Optional
+from typing import Literal, List, Optional, Union
 from datetime import datetime
 import bisect
 
@@ -33,15 +33,13 @@ class OrdersStack:
     def show(self)->List[dict]:
         return [o.get() for o in self._orders]
     
-    def select(self, values:dict)->Optional[Order]:
-        answer = {}
+    def select(self, by:Literal['price', 'volume'], value:Union[int, float])->Optional[Order]:
         if self._orders:
             params = self.peek().keys()
-            for i in values.keys():
-                if i in params:
-                    answer[i] = [o.get() for o in self._orders if o.get()[i]==values[i]]
+            if by in params:
+                return [o.get() for o in self._orders if o.get()[by]==value]
         
-        return answer
+        return []
 
 
 # from lowest to highest 
@@ -82,7 +80,7 @@ class OrderBook:
         return self.bids.peek()
     
     def get_price(self, price:float)->Optional[Order]:
-        return [self.asks.select({'price': price}), self.bids.select({'price': price})]
+        return [self.asks.select('price', price), self.bids.select('price', price)]
     
     
 if __name__ == "__main__":
