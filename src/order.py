@@ -12,9 +12,9 @@ class Order:
                  order_type: Literal['limit', 'market', 'stop']='limit',
                  stop_price: Optional[float]=None,
                  time_in_force: Literal['GTC', 'IOC', 'FOK']='GTC',
-                 # GTC (Good Till Cancelled)
-                 # IOC (Immediate Or Cancel)
-                 # FOK (Fill Or Kill)
+                                       # GTC (Good Till Cancelled)
+                                       # IOC (Immediate Or Cancel)
+                                       # FOK (Fill Or Kill)
                 ):
         
         self.side = side
@@ -37,12 +37,47 @@ class Order:
         
         self.timestamp = datetime.now()
         self.id = str(uuid.uuid4())
+        
+        self.executed_volume = 0
+        self.status: Literal['new', 'partially_filled', 'filled', 'cancelled'] = 'new'
+    
+    @property
+    def remaining_volume(self) -> Union[int, float]:
+        return self.volume - self.executed_volume
+    
+    def execute(self, volume: Union[int, float], price: float) -> None:
+        if volume > self.remaining_volume:
+            raise ValueError(f'Cannot execute {volume}, remaining: {self.remaining_volume}')
+        
+        self.executed_volume += volume
+        
+        if self.executed_volume == self.volume:
+            self.status = 'filled'
+        elif self.executed_volume > 0:
+            self.status = 'partially_filled'
+        
+        self.last_execution_price = price
+    
+    def cancel(self) -> None:
+        if self.status not in ['filled', 'cancelled']:
+            self.status = 'cancelled'
     
     def get(self)->dict:
         return {
             'id': self.id,
             'side': self.side,
             'price': self.price,
+            'stop_price': self.stop_price,
             'volume': self.volume,
-            'timestamp': self.timestamp,
+            'order_type': self.order_type,
+            'time_in_force': self.time_in_force,
+            'timestamp': self.timestamp.isoformat(),
+            'executed_volume': self.executed_volume,
+            'remaining_volume': self.remaining_volume,
+            'status': self.status
         }
+    
+    def __repr__(self) -> str:
+        price_str = f'@${self.price}' if self.price else '[MARKET]'
+        return f'Order #{self.id[:8]} | {self.side} | {self.volume} | {price_str} | {self.status}'
+    
