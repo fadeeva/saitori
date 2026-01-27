@@ -67,6 +67,10 @@ def test_order_creation_validation():
     # Stop order without price - ERROR (even if there is stop_price)
     with pytest.raises(ValueError, match='Price required for stop order'):
         Order(side='bid', price=None, stop_price=100, volume=100, order_type='stop')
+        
+    # Negative volume - ERROR
+    with pytest.raises(ValueError, match='Volume must be positive, got -100'):
+        Order(side='bid', price=100, volume=-100, order_type='limit')
     
 
 def test_order_execution():

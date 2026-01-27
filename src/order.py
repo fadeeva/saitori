@@ -19,7 +19,6 @@ class Order:
         
         self.side = side
         self.volume = volume
-        self.price = price
         self.order_type = order_type
         self.time_in_force = time_in_force
         
@@ -35,6 +34,10 @@ class Order:
         else:
             self.stop_price = stop_price
         
+        if self.volume <=0:
+            raise ValueError(f'Volume must be positive, got {volume}')
+        
+                             
         self.timestamp = datetime.now()
         self.id = str(uuid.uuid4())
         
