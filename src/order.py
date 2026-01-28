@@ -5,6 +5,22 @@ import uuid
 
 
 class Order:
+    STATUS_NEW = 'new'
+    STATUS_PARTIALLY_FILLED = 'partially_filled'
+    STATUS_FILLED = 'filled'
+    STATUS_CANCELLED = 'cancelled'
+    
+    TYPE_LIMIT = 'limit'
+    TYPE_MARKET = 'market'
+    TYPE_STOP = 'stop'
+    
+    SIDE_BID = 'bid'
+    SIDE_ASK = 'ask'
+    
+    TIF_GTC = 'GTC' # Good Till Cancelled
+    TIF_IOC = 'IOC' # Immediate Or Cancel
+    TIF_FOK = 'FOK' # Fill Or Kill
+    
     def __init__(self,
                  side: Literal['bid', 'ask'],
                  volume: Union[int, float],
@@ -12,9 +28,6 @@ class Order:
                  order_type: Literal['limit', 'market', 'stop']='limit',
                  stop_price: Optional[float]=None,
                  time_in_force: Literal['GTC', 'IOC', 'FOK']='GTC',
-                                       # GTC (Good Till Cancelled)
-                                       # IOC (Immediate Or Cancel)
-                                       # FOK (Fill Or Kill)
                 ):
         
         self.side = side
@@ -22,14 +35,14 @@ class Order:
         self.order_type = order_type
         self.time_in_force = time_in_force
         
-        if order_type=='market':
+        if order_type==self.TYPE_MARKET:
             self.price = None
-        elif order_type in ['limit', 'stop'] and price is None:
+        elif order_type in [self.TYPE_LIMIT, self.TYPE_STOP] and price is None:
             raise ValueError(f'Price required for {order_type} order')
         else:
             self.price = price
         
-        if order_type=='stop' and stop_price is None:
+        if order_type==self.TYPE_STOP and stop_price is None:
             raise ValueError('Stop price required for stop order')
         else:
             self.stop_price = stop_price
@@ -42,7 +55,7 @@ class Order:
         self.id = str(uuid.uuid4())
         
         self.executed_volume = 0
-        self.status: Literal['new', 'partially_filled', 'filled', 'cancelled'] = 'new'
+        self.status: Literal['new', 'partially_filled', 'filled', 'cancelled'] = self.STATUS_NEW
     
     @property
     def remaining_volume(self) -> Union[int, float]:
