@@ -1,33 +1,42 @@
 from typing import Literal, List, Optional, Union, Dict
+from enum import Enum
 from datetime import datetime
 
 import uuid
 
 
+class OrderStatus(Enum):
+    NEW = 'new'
+    PARTIALLY_FILLED = 'partially_filled' 
+    FILLED = 'filled'
+    CANCELLED = 'cancelled'
+
+
+class OrderType(Enum):
+    LIMIT = 'limit'
+    MARKET = 'market'
+    STOP = 'stop'
+    
+
+class OrderSide(Enum):
+    BID = 'bid'
+    ASK = 'ask'
+
+
+class OrderTimeForce(Enum):
+    GTC = 'GTC' # Good Till Cancelled
+    IOC = 'IOC' # Immediate Or Cancel
+    FOK = 'FOK' # Fill Or Kill
+    
+
 class Order:
-    STATUS_NEW = 'new'
-    STATUS_PARTIALLY_FILLED = 'partially_filled'
-    STATUS_FILLED = 'filled'
-    STATUS_CANCELLED = 'cancelled'
-    
-    TYPE_LIMIT = 'limit'
-    TYPE_MARKET = 'market'
-    TYPE_STOP = 'stop'
-    
-    SIDE_BID = 'bid'
-    SIDE_ASK = 'ask'
-    
-    TIF_GTC = 'GTC' # Good Till Cancelled
-    TIF_IOC = 'IOC' # Immediate Or Cancel
-    TIF_FOK = 'FOK' # Fill Or Kill
-    
     def __init__(self,
-                 side: Literal['bid', 'ask'],
+                 side: OrderSide,
                  volume: Union[int, float],
                  price: Optional[float]=None,
-                 order_type: Literal['limit', 'market', 'stop']='limit',
+                 order_type: OrderType=OrderType.LIMIT,
                  stop_price: Optional[float]=None,
-                 time_in_force: Literal['GTC', 'IOC', 'FOK']='GTC',
+                 time_in_force: OrderTimeForce=OrderTimeForce.GTC,
                 ):
         
         self.side = side
@@ -35,14 +44,14 @@ class Order:
         self.order_type = order_type
         self.time_in_force = time_in_force
         
-        if order_type==self.TYPE_MARKET:
+        if order_type==OrderType.MARKET:
             self.price = None
-        elif order_type in [self.TYPE_LIMIT, self.TYPE_STOP] and price is None:
+        elif order_type in [OrderType.LIMIT, OrderType.STOP] and price is None:
             raise ValueError(f'Price required for {order_type} order')
         else:
             self.price = price
         
-        if order_type==self.TYPE_STOP and stop_price is None:
+        if order_type==OrderType.STOP and stop_price is None:
             raise ValueError('Stop price required for stop order')
         else:
             self.stop_price = stop_price
@@ -55,7 +64,7 @@ class Order:
         self.id = str(uuid.uuid4())
         
         self.executed_volume = 0
-        self.status: Literal['new', 'partially_filled', 'filled', 'cancelled'] = self.STATUS_NEW
+        self.status: OrderStatus = OrderStatus.NEW
     
     @property
     def remaining_volume(self) -> Union[int, float]:
@@ -68,15 +77,15 @@ class Order:
         self.executed_volume += volume
         
         if self.executed_volume == self.volume:
-            self.status = 'filled'
+            self.status = OrderStatus.FILLED
         elif self.executed_volume > 0:
-            self.status = 'partially_filled'
+            self.status = OrderStatus.PARTIALLY_FILLED
         
         self.last_execution_price = price
     
     def cancel(self) -> None:
-        if self.status not in ['filled', 'cancelled']:
-            self.status = 'cancelled'
+        if self.status not in [OrderStatus.FILLED, OrderStatus.CANCLLED]:
+            self.status = OrderStatus.CANCLLED
     
     def get(self)->dict:
         return {
