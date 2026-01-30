@@ -1,7 +1,9 @@
-from typing import Literal, List, Optional, Union, Dict
+from decimal import Decimal
 from enum import Enum
-from datetime import datetime
 
+from typing import Literal, List, Optional, Union, Dict
+
+from datetime import datetime
 import uuid
 
 
@@ -32,10 +34,10 @@ class OrderTimeForce(Enum):
 class Order:
     def __init__(self,
                  side: OrderSide,
-                 volume: Union[int, float],
-                 price: Optional[float]=None,
+                 volume: Union[int, Decimal],
+                 price: Optional[Decimal]=None,
                  order_type: OrderType=OrderType.LIMIT,
-                 stop_price: Optional[float]=None,
+                 stop_price: Optional[Decimal]=None,
                  time_in_force: OrderTimeForce=OrderTimeForce.GTC,
                 ):
         
