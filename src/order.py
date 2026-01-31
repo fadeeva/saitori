@@ -32,6 +32,21 @@ class OrderTimeForce(Enum):
     
 
 class Order:
+    
+    __slots__ = (
+        'id',
+        'side',
+        'price',
+        'stop_price',
+        'volume',
+        'order_type',
+        'time_in_force',
+        'timestamp',
+        'executed_volume',
+        'last_execution_price',
+        'status'
+    )
+    
     def __init__(self,
                  side: OrderSide,
                  volume: Union[int, Decimal],
