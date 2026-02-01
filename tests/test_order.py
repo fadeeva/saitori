@@ -1,6 +1,6 @@
 import pytest
 from datetime import datetime
-from src.order import Order, OrderStatus, OrderType, OrderSide, OrderTimeForce
+from src.order import Order, OrderStatus, OrderType, OrderSide, OrderTIF
 
 
 def test_order_creation_limit():
@@ -16,7 +16,7 @@ def test_order_creation_limit():
     assert order.price == 10.54
     assert order.volume == 100
     assert order.order_type == OrderType.LIMIT
-    assert order.time_in_force == OrderTimeForce.GTC
+    assert order.time_in_force == OrderTIF.GTC
     assert order.remaining_volume == 100
     assert order.id is not None
     assert isinstance(order.timestamp, datetime)

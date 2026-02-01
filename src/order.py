@@ -25,7 +25,7 @@ class OrderSide(Enum):
     ASK = 'ask'
 
 
-class OrderTimeForce(Enum):
+class OrderTIF(Enum): # Time Force
     GTC = 'GTC' # Good Till Cancelled
     IOC = 'IOC' # Immediate Or Cancel
     FOK = 'FOK' # Fill Or Kill
@@ -53,7 +53,7 @@ class Order:
                  price: Optional[Decimal]=None,
                  order_type: OrderType=OrderType.LIMIT,
                  stop_price: Optional[Decimal]=None,
-                 time_in_force: OrderTimeForce=OrderTimeForce.GTC,
+                 time_in_force: OrderTIF=OrderTIF.GTC,
                 ):
         
         self.side = side
