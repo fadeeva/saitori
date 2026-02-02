@@ -1,6 +1,6 @@
 import pytest
 from datetime import datetime
-from src.order import Order, OrderStatus, OrderType, OrderSide, OrderTIF
+from src.order import Order, OrderStatus, OrderType, OrderSide, OrderTIF, OrderErrorMessages
 
 
 def test_order_creation_limit():

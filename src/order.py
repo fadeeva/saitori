@@ -7,6 +7,17 @@ from datetime import datetime
 import uuid
 
 
+class OrderErrorMessages(Enum):
+    VOLUME_MUST_BE_POSITIVE = 'Volume must be positive, got {volume}'
+    PRICE_REQUIRED = 'Price required for {order_type} order'
+    STOP_PRICE_REQUIRED = 'Stop price required for stop order'
+    STOP_PRICE_ONLY_FOR_STOP = 'Stop price can only be set for STOP orders'
+    CANNOT_EXECUTE = 'Cannot execute {volume}, remaining: {remaining}'
+    
+    def format(self, **kwargs) -> str:
+        return self.value.format(**kwargs)
+
+
 class OrderStatus(Enum):
     NEW = 'new'
     PARTIALLY_FILLED = 'partially_filled' 
@@ -63,16 +74,22 @@ class Order:
         if order_type==OrderType.MARKET:
             self.price = None
         elif order_type in [OrderType.LIMIT, OrderType.STOP] and price is None:
-            raise ValueError(f'Price required for {order_type} order')
+            raise ValueError(
+                OrderErrorMessages.PRICE_REQUIRED.format(order_type=order_type)
+            )
         else:
             self.price = price
         
         self.stop_price = stop_price
         if order_type==OrderType.STOP and stop_price is None:
-            raise ValueError('Stop price required for stop order')
+            raise ValueError(
+                OrderErrorMessages.STOP_PRICE_REQUIRED.format()
+            )
         
-        if self.volume <=0:
-            raise ValueError(f'Volume must be positive, got {volume}')
+        if self.volume <= 0:
+            raise ValueError(
+                OrderErrorMessages.VOLUME_MUST_BE_POSITIVE.format(volume=volume)
+            )
     
         self.timestamp = datetime.now()
         self.id = str(uuid.uuid4())
@@ -87,7 +104,12 @@ class Order:
     
     def execute(self, volume: Union[int, Decimal], price: Union[int, Decimal]) -> None:
         if volume > self.remaining_volume:
-            raise ValueError(f'Cannot execute {volume}, remaining: {self.remaining_volume}')
+            raise ValueError(
+                OrderErrorMessages.CANNOT_EXECUTE.format(
+                    volume=volume,
+                    remaining=self.remaining_volume
+                )
+            )
         
         self.executed_volume += volume
         
