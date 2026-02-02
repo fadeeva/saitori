@@ -32,7 +32,6 @@ class OrderTIF(Enum): # Time Force
     
 
 class Order:
-    
     __slots__ = (
         'id',
         'side',
@@ -86,7 +85,7 @@ class Order:
     def remaining_volume(self) -> Union[int, Decimal]:
         return self.volume - self.executed_volume
     
-    def execute(self, volume: Union[int, Decimal], price: float) -> None:
+    def execute(self, volume: Union[int, Decimal], price: Union[int, Decimal]) -> None:
         if volume > self.remaining_volume:
             raise ValueError(f'Cannot execute {volume}, remaining: {self.remaining_volume}')
         
