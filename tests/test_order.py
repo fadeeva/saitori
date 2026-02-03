@@ -5,6 +5,7 @@ from src.order import Order, OrderStatus, OrderType, OrderSide, OrderTIF, OrderE
 
 def test_order_creation_limit():
     ''' Test for limit order '''
+    
     order = Order(
         side=OrderSide.BID,
         price=10.54,
@@ -24,6 +25,7 @@ def test_order_creation_limit():
 
 def test_order_creation_market():
     ''' Test for market order '''
+    
     order = Order(
         side=OrderSide.ASK,
         volume=55,
@@ -38,6 +40,7 @@ def test_order_creation_market():
 
 def test_order_creation_stop():
     ''' Test for stop-order '''
+    
     order = Order(
         side=OrderSide.BID,
         price=105,
@@ -57,24 +60,25 @@ def test_order_creation_validation():
     ''' Test of validation '''
     
     # Limit order without price - ERROR
-    with pytest.raises(ValueError, match='Price required for OrderType.LIMIT'):
+    with pytest.raises(ValueError, match=OrderErrorMessages.PRICE_REQUIRED.format(order_type=OrderType.LIMIT)):
         Order(side=OrderSide.BID, volume=100, order_type=OrderType.LIMIT, price=None)
     
     # Stop order without stop_price - ERROR
-    with pytest.raises(ValueError, match='Stop price required for stop order'):
+    with pytest.raises(ValueError, match=OrderErrorMessages.STOP_PRICE_REQUIRED.format()):
         Order(side=OrderSide.BID, price=100, volume=100, order_type=OrderType.STOP, stop_price=None)
     
     # Stop order without price - ERROR (even if there is stop_price)
-    with pytest.raises(ValueError, match='Price required for OrderType.STOP'):
+    with pytest.raises(ValueError, match=OrderErrorMessages.PRICE_REQUIRED.format(order_type=OrderType.STOP)):
         Order(side=OrderSide.BID, price=None, stop_price=100, volume=100, order_type=OrderType.STOP)
         
     # Negative volume - ERROR
-    with pytest.raises(ValueError, match='Volume must be positive, got -100'):
+    with pytest.raises(ValueError, match=OrderErrorMessages.VOLUME_MUST_BE_POSITIVE.format(volume=-100)):
         Order(side=OrderSide.BID, price=100, volume=-100, order_type=OrderType.LIMIT)
     
 
 def test_order_execution():
     ''' Test for partial execution '''
+    
     order = Order(side=OrderSide.BID, price=100, volume=100)
     
     order.execute(volume=30, price=99.95)
@@ -94,6 +98,7 @@ def test_order_execution():
 
 def test_order_execution_validation():
     ''' Test of execution validation '''
+    
     order = Order(side=OrderSide.BID, price=100, volume=100)
     
     # Try to execute more that it has

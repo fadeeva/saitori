@@ -102,7 +102,7 @@ class Order:
     def remaining_volume(self) -> Union[int, Decimal]:
         return self.volume - self.executed_volume
     
-    def execute(self, volume: Union[int, Decimal], price: Union[int, Decimal]) -> None:
+    def execute(self, volume: Union[int, Decimal], price: Decimal) -> None:
         if volume > self.remaining_volume:
             raise ValueError(
                 OrderErrorMessages.CANNOT_EXECUTE.format(
