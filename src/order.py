@@ -140,6 +140,6 @@ class Order:
         }
     
     def __repr__(self) -> str:
-        price_str = f'@${self.price}' if self.price else '[MARKET]'
-        return f'Order #{self.id[:8]} | {self.side.value} | {self.volume} | {price_str} | {self.status.value}'
+        price_str = f'${self.price}' if self.price else '[MARKET]'
+        return f'ORDER: #{self.id[:8]} | {self.side.value} | {self.volume} | {price_str} | {self.status.value}'
     
