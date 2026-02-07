@@ -2,6 +2,8 @@ from decimal import Decimal
 
 try:
     from src.order import Order, OrderStatus, OrderType, OrderSide, OrderTIF, OrderErrorMessages
+    from src.orderbook import OrderBook, BidOrders, AskOrders, OrdersStack
+    
     IMPORT_SUCCESS = True
 except ImportError as e:
     print(f'Import Error: {e}.')
@@ -62,13 +64,39 @@ def demo_create_orders():
     
     return [limit_buy, limit_sell, market_buy, stop_order]
 
+
+def demo_orderbook():
+    limit_buy = Order(
+        side=OrderSide.BID,
+        price=Decimal('100.50'),
+        volume=Decimal('100'),
+        order_type=OrderType.LIMIT,
+        time_in_force=OrderTIF.GTC
+    )
     
+    # 2
+    limit_sell = Order(
+        side=OrderSide.ASK,
+        price=Decimal('101.25'),
+        volume=Decimal('50'),
+        order_type=OrderType.LIMIT,
+        time_in_force=OrderTIF.IOC
+    )
+    
+    ob = OrderBook()
+    ob.add(limit_buy)
+    ob.add(limit_sell)
+    
+    print(ob)
+
+
 def main():
     if not IMPORT_SUCCESS:
         print('FAILED to import modules (((')
         return
     
-    demo_create_orders()
+#    demo_create_orders()
+    demo_orderbook()
 
 
 if __name__ == '__main__':

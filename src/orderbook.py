@@ -1,5 +1,7 @@
-from typing import Literal, List, Optional, Union, Dict
+from typing import Literal, List, Optional, Union, Dict, Tuple
+import bisect
 
+from src.order import Order, OrderStatus, OrderType, OrderSide, OrderTIF, OrderErrorMessages
 
 class OrdersStack:
     def __init__(self):
@@ -38,7 +40,7 @@ class OrderBook:
         self.bids = BidOrders()
     
     def add(self, order:Order)->None:
-        if order.side=='ask':
+        if order.side == OrderSide.ASK:
             self.asks.push(order)
         else:
             self.bids.push(order)
@@ -50,6 +52,9 @@ class OrderBook:
     @property
     def best_bid(self)->Optional[Order]:
         return self.bids.peek()
+    
+    def __str__(self) -> str:
+        return str(self.asks.show()) + str(self.bids.show())
     
 
     
