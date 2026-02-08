@@ -77,8 +77,8 @@ def demo_orderbook():
     # 2
     limit_sell = Order(
         side=OrderSide.ASK,
-        price=Decimal('101.25'),
-        volume=Decimal('50'),
+        price=Decimal('100.50'),
+        volume=Decimal('150'),
         order_type=OrderType.LIMIT,
         time_in_force=OrderTIF.IOC
     )
@@ -86,6 +86,7 @@ def demo_orderbook():
     ob = OrderBook()
     ob.add(limit_buy)
     ob.add(limit_sell)
+    
     
     print(ob)
 
