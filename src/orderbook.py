@@ -3,6 +3,7 @@ import bisect
 
 from src.order import Order, OrderStatus, OrderType, OrderSide, OrderTIF, OrderErrorMessages
 
+
 class OrdersStack:
     def __init__(self):
         self._orders: List[Order] = []
@@ -10,14 +11,14 @@ class OrdersStack:
     def peek(self) -> Optional[Order]:
         return self._orders[-1] if self._orders else None
     
-    def remove(self) -> None:
+    def pop(self) -> None:
         self._orders.pop()
-    
-    def __len__(self) -> int:
-        return len(self._orders)
     
     def show(self) -> List[dict]:
         return [o.get() for o in self._orders]
+    
+    def __len__(self) -> int:
+        return len(self._orders)
 
 
 # from lowest to highest 
@@ -47,37 +48,34 @@ class OrderBook:
     
     def add(self, order: Order) -> None:
         if order.side == OrderSide.ASK:
-            if not len(self.bids):
-                self.asks.push(order)
-            elif order.price == self.best_bid.price:
-                if order.volume > self.best_bid.volume:
-                    order.execute(volume=self.best_bid.volume, price=self.best_bid.price)
-                    self.best_bid.execute(volume=self.best_bid.volume, price=self.best_bid.price)
-                    self.bids.remove()
-                    # note in Trade
-                    self.asks.push(order)
-                else:
-                    order.execute(volume=order.volume, price=self.best_bid.price)
-                    self.best_bid.execute(volume=order.volume, price=self.best_bid.price)
-                    # note in Trade
-                    
+            opposite_side, same_side = self.bids, self.asks
+            best_opposite = self.best_bid
         else:
-            if not len(self.asks):
-                self.bids.push(order)
-            elif order.price == self.best_ask.price:
-                if order.volume > self.best_ask.volume:
-                    order.execute(volume=self.best_ask.volume, price=self.best_ask.price)
-                    self.best_ask.execute(volume=self.best_ask.volume, price=self.best_ask.price)
-                    self.asks.remove()
-                    # note in Trade
-                    self.bids.push(order)
-                else:
-                    order.execute(volume=order.volume, price=self.best_ask.price)
-                    self.best_ask.execute(volume=order.volume, price=self.best_ask.price)
-                    # note in Trade
+            opposite_side, same_side = self.asks, self.bids
+            best_opposite = self.best_ask
+            
+        if not len(opposite_side):
+            same_side.push(order)
+            return
+        
+        if order.price == best_opposite.price:
+            self._execute_matched_orders(order, best_opposite, same_side, opposite_side)
     
-    def execute(self) -> None:
-        pass
+    def _execute_matched_orders(self,
+                                incoming: Order, existing: Order,
+                                same_side: OrdersStack, opposite_side: OrdersStack) -> None:
+        volume = min(incoming.volume, existing.volume)
+        price = existing.price
+        
+        incoming.execute(volume=volume, price=price)
+        existing.execute(volume=volume, price=price)
+        # add note about trade to Trade
+        
+        if existing.remaining_volume == 0:
+            opposite_side.pop()
+            
+        if incoming.remaining_volume > 0:
+            same_side.push(incoming)
     
     @property
     def best_ask(self) -> Optional[Order]:
@@ -86,7 +84,6 @@ class OrderBook:
     @property
     def best_bid(self) -> Optional[Order]:
         return self.bids.peek()
-    
     
     def __str__(self) -> str:
         return str(self.asks.show()) + str(self.bids.show())
