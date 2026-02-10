@@ -60,6 +60,8 @@ class OrderBook:
         
         if order.price == best_opposite.price:
             self._execute_matched_orders(order, best_opposite, same_side, opposite_side)
+        else:
+            same_side.push(order)
     
     def _execute_matched_orders(self,
                                 incoming: Order, existing: Order,
