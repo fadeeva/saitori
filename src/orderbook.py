@@ -53,12 +53,8 @@ class OrderBook:
         else:
             opposite_side, same_side = self.asks, self.bids
             best_opposite = self.best_ask
-            
-        if not len(opposite_side):
-            same_side.push(order)
-            return
         
-        if order.price == best_opposite.price:
+        if best_opposite and order.price == best_opposite.price:
             self._execute_matched_orders(order, best_opposite, same_side, opposite_side)
         else:
             same_side.push(order)
