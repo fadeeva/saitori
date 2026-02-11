@@ -29,3 +29,16 @@ def test_orderbook_creation():
     assert isinstance(ob.best_ask, Order)
     assert ob.best_bid is limit_buy
     assert ob.best_ask is not limit_buy
+    
+    limit_buy = Order(
+        side=OrderSide.BID,
+        price=Decimal('110.00'),
+        volume=Decimal('10'),
+        order_type=OrderType.LIMIT,
+        time_in_force=OrderTIF.GTC
+    )
+    ob.add(limit_buy)
+    
+    assert len(ob) == 2
+    
+    

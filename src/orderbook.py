@@ -83,6 +83,9 @@ class OrderBook:
     def best_bid(self) -> Optional[Order]:
         return self.bids.peek()
     
+    def __len__(self):
+        return len(self.asks) + len(self.bids)
+    
     def __str__(self) -> str:
         return str(self.asks.show()) + str(self.bids.show())
     
