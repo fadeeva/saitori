@@ -47,6 +47,9 @@ class OrderBook:
         self.bids = BidOrders()
     
     def add(self, order: Order) -> None:
+        if order.order_type not in [OrderType.LIMIT, OrderType.STOP]:
+            return
+        
         if order.side == OrderSide.ASK:
             opposite_side, same_side = self.bids, self.asks
             best_opposite = self.best_bid
