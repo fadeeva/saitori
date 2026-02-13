@@ -19,6 +19,9 @@ class OrdersStack:
     
     def __len__(self) -> int:
         return len(self._orders)
+    
+    def __str__(self):
+        return f'{self.__dict__}'
 
 
 # from lowest to highest 
@@ -89,8 +92,8 @@ class OrderBook:
     def __len__(self):
         return len(self.asks) + len(self.bids)
     
-    def __str__(self) -> str:
-        return str(self.asks.show()) + str(self.bids.show())
+    def __str__(self):
+        return f'{str(self.asks)}, {str(self.bids)}'
     
 
     
