@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import Literal, List, Optional, Union, Dict, Tuple
 import bisect
 
@@ -60,10 +61,24 @@ class OrderBook:
             opposite_side, same_side = self.asks, self.bids
             best_opposite = self.best_ask
         
-        if best_opposite and order.price == best_opposite.price:
+        if best_opposite and self._best_or_equal(order.price, best_opposite.price, order.side):
             self._execute_matched_orders(order, best_opposite, same_side, opposite_side)
         else:
             same_side.push(order)
+            
+#        if best_opposite:
+#            while _best_or_equal(order.price, opposite_side.peek().price, order.side):
+#                pass
+#        else:
+#            same_side.push(order)
+    
+    def _best_or_equal(self,
+                       price: Decimal, opposite_price: Decimal,
+                       side: OrderSide) -> bool:
+        if side == OrderSide.ASK:
+            return price <= opposite_price
+        else:
+            return price >= opposite_price
     
     def _execute_matched_orders(self,
                                 incoming: Order, existing: Order,
