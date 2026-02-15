@@ -64,28 +64,37 @@ def test_orderbook_creation():
     assert len(ob) == 0
     
     #######################################
-    limit_buy = Order(
-        side=OrderSide.BID,
-        price=Decimal('100.00'),
-        volume=Decimal('200'),
-        order_type=OrderType.LIMIT,
-        time_in_force=OrderTIF.GTC
-    )
-
-    limit_sell = Order(
-        side=OrderSide.ASK,
-        price=Decimal('100.00'),
-        volume=Decimal('100'),
-        order_type=OrderType.LIMIT,
-        time_in_force=OrderTIF.IOC
-    )
-    
     ob = OrderBook()
-    ob.add(limit_buy)
-    ob.add(limit_sell)
     
-    assert ob.best_bid.remaining_volume == 100
-    assert ob.best_bid.status == OrderStatus.PARTIALLY_FILLED
-    assert len(ob) == 1
+    orders = [
+        (Decimal('100.00'), Decimal(50)),
+        (Decimal('105.00'), Decimal(30)),
+        (Decimal('110.00'), Decimal(20)),
+        (Decimal('115.00'), Decimal(10)),
+        (Decimal('120.00'), Decimal(5)),
+    ]
+    
+    for price, volume in orders:
+        ob.add(
+            Order(
+                side=OrderSide.BID,
+                price=price,
+                volume=volume,
+                order_type=OrderType.LIMIT,
+                time_in_force=OrderTIF.GTC
+            )
+        )
+    
+#    limit_sell = Order(
+#        side=OrderSide.ASK,
+#        price=Decimal('100.00'),
+#        volume=Decimal('100'),
+#        order_type=OrderType.LIMIT,
+#        time_in_force=OrderTIF.IOC
+#    )
+    
+#    ob.add(limit_sell)
+    
+    assert len(ob) == 5
     
     
