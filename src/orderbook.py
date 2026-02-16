@@ -31,7 +31,7 @@ class AskOrders(OrdersStack):
         super().__init__()
     
     def push(self, order: Order) -> None:
-        idx = bisect.bisect_right([o.price for o in self._orders], order.price)
+        idx = bisect.bisect_right([-o.price for o in self._orders], -order.price)
         self._orders.insert(idx, order)
     
 
@@ -41,7 +41,7 @@ class BidOrders(OrdersStack):
         super().__init__()
     
     def push(self, order: Order) -> None:
-        idx = bisect.bisect_right([-o.price for o in self._orders], -order.price)
+        idx = bisect.bisect_right([o.price for o in self._orders], order.price)
         self._orders.insert(idx, order)
 
         
@@ -61,24 +61,25 @@ class OrderBook:
             opposite_side, same_side = self.asks, self.bids
             best_opposite = self.best_ask
         
-        if best_opposite and self._best_or_equal(order.price, best_opposite.price, order.side):
-            self._execute_matched_orders(order, best_opposite, same_side, opposite_side)
-        else:
-            same_side.push(order)
-            
-#        if best_opposite:
-#            while _best_or_equal(order.price, opposite_side.peek().price, order.side):
-#                pass
+#        if best_opposite and self._best_or_equal(order.price, best_opposite.price, order.side):
+#            self._execute_matched_orders(order, best_opposite, same_side, opposite_side)
 #        else:
 #            same_side.push(order)
-    
-    def _best_or_equal(self,
-                       price: Decimal, opposite_price: Decimal,
-                       side: OrderSide) -> bool:
-        if side == OrderSide.ASK:
-            return price <= opposite_price
+            
+        if best_opposite:
+            while order.remaining_volume and self._best_or_equal(order, opposite_side.peek().price):
+                self._execute_matched_orders(order, self.best_bid, same_side, opposite_side)
+            
+            if order.remaining_volume > 0:
+                same_side.push(order)
         else:
-            return price >= opposite_price
+            same_side.push(order)
+    
+    def _best_or_equal(self, order: Order, opposite_price: Decimal) -> bool:
+        if order.side == OrderSide.ASK:
+            return order.price <= opposite_price
+        else:
+            return order.price >= opposite_price
     
     def _execute_matched_orders(self,
                                 incoming: Order, existing: Order,
@@ -93,8 +94,8 @@ class OrderBook:
         if existing.remaining_volume == 0:
             opposite_side.pop()
             
-        if incoming.remaining_volume > 0:
-            same_side.push(incoming)
+#        if incoming.remaining_volume > 0:
+#            same_side.push(incoming)
     
     @property
     def best_ask(self) -> Optional[Order]:
