@@ -65,5 +65,44 @@ def test_orderbook_execution():
     ob.add(limit_sell)
     
     assert len(ob) == 3
+    assert ob.best_ask.remaining_volume == Decimal('20')
+    assert ob.best_bid.price == Decimal('105.00')
+    
+    # ==================================================
+    
+    ob = OrderBook()
+    
+    orders = [
+        (Decimal('100.00'), Decimal(5)),
+        (Decimal('105.00'), Decimal(10)),
+        (Decimal('110.00'), Decimal(20)),
+        (Decimal('115.00'), Decimal(30)),
+        (Decimal('120.00'), Decimal(50)),
+    ]
+    
+    for price, volume in orders:
+        ob.add(
+            Order(
+                side=OrderSide.ASK,
+                price=price,
+                volume=volume,
+                order_type=OrderType.LIMIT,
+                time_in_force=OrderTIF.GTC
+            )
+        )
+    
+    limit_sell = Order(
+        side=OrderSide.BID,
+        price=Decimal('110.00'),
+        volume=Decimal('120'),
+        order_type=OrderType.LIMIT,
+        time_in_force=OrderTIF.IOC
+    )
+    
+    ob.add(limit_sell)
+    
+    assert len(ob) == 3
+    assert ob.best_bid.remaining_volume == Decimal('85')
+    assert ob.best_ask.price == Decimal('115.00')
     
     

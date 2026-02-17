@@ -68,7 +68,7 @@ class OrderBook:
             
         if best_opposite:
             while order.remaining_volume and self._best_or_equal(order, opposite_side.peek().price):
-                self._execute_matched_orders(order, self.best_bid, same_side, opposite_side)
+                self._execute_matched_orders(order, opposite_side.peek(), same_side, opposite_side)
             
             if order.remaining_volume > 0:
                 same_side.push(order)
