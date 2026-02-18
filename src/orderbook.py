@@ -56,16 +56,10 @@ class OrderBook:
         
         if order.side == OrderSide.ASK:
             opposite_side, same_side = self.bids, self.asks
-            best_opposite = self.best_bid
         else:
             opposite_side, same_side = self.asks, self.bids
-            best_opposite = self.best_ask
         
-#        if best_opposite and self._best_or_equal(order.price, best_opposite.price, order.side):
-#            self._execute_matched_orders(order, best_opposite, same_side, opposite_side)
-#        else:
-#            same_side.push(order)
-            
+        best_opposite = opposite_side.peek()
         if best_opposite:
             while order.remaining_volume and self._best_or_equal(order, opposite_side.peek().price):
                 self._execute_matched_orders(order, opposite_side.peek(), same_side, opposite_side)
@@ -93,9 +87,6 @@ class OrderBook:
         
         if existing.remaining_volume == 0:
             opposite_side.pop()
-            
-#        if incoming.remaining_volume > 0:
-#            same_side.push(incoming)
     
     @property
     def best_ask(self) -> Optional[Order]:
