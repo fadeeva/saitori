@@ -97,7 +97,6 @@ def demo_orderbook():
     
     ob.add(limit_sell)
     
-    
     print(ob)
 
 

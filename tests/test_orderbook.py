@@ -31,6 +31,17 @@ def test_orderbook_creation():
     assert ob.best_ask is not limit_buy
     assert len(ob) == 2
     
+    marker_order = Order(
+        side=OrderSide.ASK,
+        price=Decimal('110.00'),
+        volume=Decimal('100'),
+        order_type=OrderType.MARKET,
+        time_in_force=OrderTIF.IOC
+    )
+    
+    ob.add(marker_order) # must be ignored
+    assert len(ob) == 2
+    
     
 def test_orderbook_execution():
     ob = OrderBook()
@@ -105,4 +116,37 @@ def test_orderbook_execution():
     assert ob.best_bid.remaining_volume == Decimal('85')
     assert ob.best_ask.price == Decimal('115.00')
     
+    # ==================================================
     
+    ob = OrderBook()
+    
+    orders = [
+        (Decimal('100.00'), Decimal(5), OrderSide.ASK),
+        (Decimal('105.00'), Decimal(10), OrderSide.ASK),
+        (Decimal('110.00'), Decimal(20), OrderSide.BID),
+        (Decimal('115.00'), Decimal(30), OrderSide.ASK),
+        (Decimal('120.00'), Decimal(50), OrderSide.BID),
+#        (Decimal('100.00'), Decimal(5), OrderSide.BID),
+#        (Decimal('105.00'), Decimal(10), OrderSide.ASK),
+#        (Decimal('110.00'), Decimal(20), OrderSide.ASK),
+#        (Decimal('115.00'), Decimal(30), OrderSide.BID),
+#        (Decimal('120.00'), Decimal(50)), OrderSide.ASK,
+    ]
+    
+    
+    for price, volume, side in orders:
+        ob.add(
+            Order(
+                side=side,
+                price=price,
+                volume=volume,
+                order_type=OrderType.LIMIT,
+                time_in_force=OrderTIF.GTC
+            )
+        )
+    
+    assert len(ob) == 2
+    assert ob.best_ask is None
+    assert ob.best_bid.price == Decimal('120.00')
+    assert ob.best_bid.remaining_volume == Decimal('20')
+        
