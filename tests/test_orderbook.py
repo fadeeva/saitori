@@ -126,11 +126,11 @@ def test_orderbook_execution():
         (Decimal('110.00'), Decimal(20), OrderSide.BID),
         (Decimal('115.00'), Decimal(30), OrderSide.ASK),
         (Decimal('120.00'), Decimal(50), OrderSide.BID),
-#        (Decimal('100.00'), Decimal(5), OrderSide.BID),
-#        (Decimal('105.00'), Decimal(10), OrderSide.ASK),
-#        (Decimal('110.00'), Decimal(20), OrderSide.ASK),
-#        (Decimal('115.00'), Decimal(30), OrderSide.BID),
-#        (Decimal('120.00'), Decimal(50)), OrderSide.ASK,
+        (Decimal('100.00'), Decimal(5), OrderSide.BID),
+        (Decimal('105.00'), Decimal(10), OrderSide.ASK),
+        (Decimal('110.00'), Decimal(20), OrderSide.ASK),
+        (Decimal('115.00'), Decimal(30), OrderSide.BID),
+        (Decimal('120.00'), Decimal(50), OrderSide.ASK),
     ]
     
     
@@ -145,8 +145,9 @@ def test_orderbook_execution():
             )
         )
     
-    assert len(ob) == 2
-    assert ob.best_ask is None
-    assert ob.best_bid.price == Decimal('120.00')
-    assert ob.best_bid.remaining_volume == Decimal('20')
+    assert len(ob) == 3
+    assert ob.best_ask.price == Decimal('120.00')
+    assert ob.best_ask.volume == Decimal('50')
+    assert ob.best_bid.price == Decimal('115.00')
+    assert ob.best_bid.remaining_volume == Decimal('25')
         
