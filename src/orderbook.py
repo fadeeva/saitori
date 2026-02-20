@@ -80,7 +80,7 @@ class OrderBook:
     def _execute_matched_orders(self,
                                 incoming: Order, existing: Order,
                                 same_side: OrdersStack, opposite_side: OrdersStack) -> None:
-        volume = min(incoming.volume, existing.volume)
+        volume = min(incoming.remaining_volume, existing.remaining_volume)
         price = existing.price
         
         incoming.execute(volume=volume, price=price)
