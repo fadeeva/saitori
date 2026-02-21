@@ -18,7 +18,7 @@ def test_orderbook_creation():
         price=Decimal('110.00'),
         volume=Decimal('100'),
         order_type=OrderType.LIMIT,
-        time_in_force=OrderTIF.IOC
+        time_in_force=OrderTIF.GTC
     )
 
     ob = OrderBook()
@@ -36,7 +36,7 @@ def test_orderbook_creation():
         price=Decimal('110.00'),
         volume=Decimal('100'),
         order_type=OrderType.MARKET,
-        time_in_force=OrderTIF.IOC
+        time_in_force=OrderTIF.GTC
     )
     
     ob.add(marker_order) # must be ignored
@@ -70,7 +70,7 @@ def test_orderbook_execution():
         price=Decimal('110.00'),
         volume=Decimal('120'),
         order_type=OrderType.LIMIT,
-        time_in_force=OrderTIF.IOC
+        time_in_force=OrderTIF.GTC
     )
     
     ob.add(limit_sell)
@@ -107,7 +107,7 @@ def test_orderbook_execution():
         price=Decimal('110.00'),
         volume=Decimal('120'),
         order_type=OrderType.LIMIT,
-        time_in_force=OrderTIF.IOC
+        time_in_force=OrderTIF.GTC
     )
     
     ob.add(limit_sell)
