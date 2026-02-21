@@ -38,8 +38,8 @@ class OrderSide(Enum):
 
 class OrderTIF(Enum): # Time Force
     GTC = 'GTC' # Good Till Cancelled
-    IOC = 'IOC' # Immediate Or Cancel
-    FOK = 'FOK' # Fill Or Kill
+    IOC = 'IOC' # Immediate Or Cancel. Сanceling only the remainder.
+    FOK = 'FOK' # Fill Or Kill. Filled immediately or the whole order is canceled.
     
 
 class Order:
