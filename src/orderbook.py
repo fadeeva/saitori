@@ -66,10 +66,11 @@ class OrderBook:
                   and self._best_or_equal(order, opposite_side.peek().price):
                 self._execute_matched_orders(order, opposite_side.peek(), same_side, opposite_side)
             
-            if order.remaining_volume > 0:
+            if order.remaining_volume > 0 and order.time_in_force not in [OrderTIF.IOC, OrderTIF.FOK]:
                 same_side.push(order)
         else:
-            same_side.push(order)
+            if order.time_in_force not in [OrderTIF.IOC, OrderTIF.FOK]:
+                same_side.push(order)
     
     def _best_or_equal(self, order: Order, opposite_price: Decimal) -> bool:
         if order.side == OrderSide.ASK:
@@ -80,6 +81,7 @@ class OrderBook:
     def _execute_matched_orders(self,
                                 incoming: Order, existing: Order,
                                 same_side: OrdersStack, opposite_side: OrdersStack) -> None:
+        
         volume = min(incoming.remaining_volume, existing.remaining_volume)
         price = existing.price
         
