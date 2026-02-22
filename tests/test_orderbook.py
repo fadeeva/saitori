@@ -150,4 +150,32 @@ def test_orderbook_execution():
     assert ob.best_ask.volume == Decimal('50')
     assert ob.best_bid.price == Decimal('115.00')
     assert ob.best_bid.remaining_volume == Decimal('25')
-        
+
+
+def test_FOK_execution():
+    ob = OrderBook()
+    
+    limit_buy = Order(
+        side=OrderSide.BID,
+        price=Decimal('110.00'),
+        volume=Decimal('100'),
+        order_type=OrderType.LIMIT,
+        time_in_force=OrderTIF.GTC
+    )
+
+    limit_sell = Order(
+        side=OrderSide.ASK,
+        price=Decimal('110.00'),
+        volume=Decimal('120'),
+        order_type=OrderType.LIMIT,
+        time_in_force=OrderTIF.FOK
+    )
+
+    ob.add(limit_buy)
+    ob.add(limit_sell)
+    
+    assert len(ob) == 1
+    assert ob.best_bid.volume == 100
+    assert ob.best_ask is None
+    
+    
