@@ -19,16 +19,7 @@ class OrdersStack:
         return [o.get() for o in self._orders]
     
     def __iter__(self) -> Iterator[Order]:
-        self._index = 0
-        return self
-    
-    def __next__(self) -> Order:
-        if self._index < len(self._orders):
-            result = self._orders[self._index]
-            self._index += 1
-            return result
-        else:
-            raise StopIteration
+        return iter(self._orders)
     
     def __len__(self) -> int:
         return len(self._orders)
