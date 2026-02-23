@@ -21,6 +21,10 @@ class OrdersStack:
     def __iter__(self) -> Iterator[Order]:
         return iter(self._orders)
     
+    def __reversed__(self):
+        for idx in range(len(self._orders)-1, -1, -1):
+            yield self._orders[idx]
+    
     def __len__(self) -> int:
         return len(self._orders)
     
@@ -83,7 +87,7 @@ class OrderBook:
                 
     def _is_enough_volume(self, order: Order, opposite_side: List[Order]) -> bool:
         volume = 0
-        for o in opposite_side:
+        for o in reversed(opposite_side):
             if self._best_or_equal(order, o.price):
                 volume += o.volume
             else:
