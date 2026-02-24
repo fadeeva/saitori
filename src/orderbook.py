@@ -18,6 +18,10 @@ class OrdersStack:
     def show(self) -> List[dict]:
         return [o.get() for o in self._orders]
     
+    @property
+    def volume(self) -> Decimal:
+        return sum(o.volume for o in self._orders)
+    
     def __iter__(self) -> Iterator[Order]:
         return iter(self._orders)
     
@@ -77,22 +81,20 @@ class OrderBook:
                   and opposite_side.peek() \
                   and self._best_or_equal(order, opposite_side.peek().price):
                 self._execute_matched_orders(order, opposite_side.peek(), same_side, opposite_side)
-            
-            if order.remaining_volume > 0 and order.time_in_force is not OrderTIF.IOC:
-                same_side.push(order)
-        else:
-            if order.time_in_force is not OrderTIF.IOC:
+                
+        if order.remaining_volume > 0 and order.time_in_force is not OrderTIF.IOC:
                 same_side.push(order)
 
                 
     def _is_enough_volume(self, order: Order, opposite_side: List[Order]) -> bool:
-        volume = 0
+        existing_volume = 0
         for o in reversed(opposite_side):
             if self._best_or_equal(order, o.price):
-                volume += o.volume
+                existing_volume += o.volume
             else:
                 break
-        return order.volume <= volume
+
+        return order.volume <= existing_volume
     
     
     def _best_or_equal(self, order: Order, opposite_price: Decimal) -> bool:
