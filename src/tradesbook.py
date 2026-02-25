@@ -24,9 +24,4 @@ class TradesBook:
     def add(self, trade: Trade) -> None:
         self._trades.append(trade)
 
-        
-trade = Trade('123', '321', OrderSide.ASK, Decimal('110.99'), Decimal('23'))
 
-trades_book = TradesBook()
-
-trades_book.add(trade)
