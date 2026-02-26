@@ -2,7 +2,8 @@ from decimal import Decimal
 from typing import Literal, List, Optional, Union, Dict, Tuple, Iterator
 import bisect
 
-from src.order import Order, OrderStatus, OrderType, OrderSide, OrderTIF, OrderErrorMessages
+from order import Order, OrderStatus, OrderType, OrderSide, OrderTIF, OrderErrorMessages
+from tradesbook import Trade, TradesBook
 
 
 class OrdersStack:
@@ -60,6 +61,7 @@ class OrderBook:
     def __init__(self):
         self.asks = AskOrders()
         self.bids = BidOrders()
+        self.trades_book = TradesBook()
     
     
     def add(self, order: Order) -> None:
@@ -113,7 +115,12 @@ class OrderBook:
         
         incoming.execute(volume=volume, price=price)
         existing.execute(volume=volume, price=price)
-        # add note about trade to Trade
+        
+        bid_order_id = incoming.id if incoming.side == OrderSide.BID else existing.id
+        ask_order_id = incoming.id if incoming.side == OrderSide.ASK else existing.id
+        self.trades_book.add(
+            Trade(bid_order_id, ask_order_id, incoming.side, price, volume)
+        )
         
         if existing.remaining_volume == 0:
             opposite_side.pop()
