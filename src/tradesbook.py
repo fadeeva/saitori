@@ -1,7 +1,7 @@
 from decimal import Decimal
 from datetime import datetime
 
-from order import Order, OrderSide
+from src.order import Order, OrderSide
 
 
 class Trade:
