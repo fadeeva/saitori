@@ -1,5 +1,6 @@
 from decimal import Decimal
 from datetime import datetime
+import uuid
 
 from src.order import Order, OrderSide
 
@@ -14,6 +15,8 @@ class Trade:
         self.side = aggressor_side
         self.price = price
         self.volume = volume
+        
+        self.id = str(uuid.uuid4())
         self.timestamp = datetime.now()
     
 
@@ -23,5 +26,8 @@ class TradesBook:
     
     def add(self, trade: Trade) -> None:
         self._trades.append(trade)
+    
+    def __len__(self):
+        return len(self._trades)
 
 
