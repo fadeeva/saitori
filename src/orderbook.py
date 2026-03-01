@@ -116,10 +116,8 @@ class OrderBook:
         incoming.execute(volume=volume, price=price)
         existing.execute(volume=volume, price=price)
         
-        bid_order_id = incoming.id if incoming.side == OrderSide.BID else existing.id
-        ask_order_id = incoming.id if incoming.side == OrderSide.ASK else existing.id
         self.trades_book.add(
-            Trade(bid_order_id, ask_order_id, incoming.side, price, volume)
+            Trade(incoming, existing, incoming.side, price, volume)
         )
         
         if existing.remaining_volume == 0:

@@ -7,11 +7,12 @@ from src.order import Order, OrderSide
 
 class Trade:
     def __init__(self,
-                 bid_order_id: str, ask_order_id: str,
+                 order_a: Order, order_b: Order,
                  aggressor_side: OrderSide,
                  price: Decimal, volume: Decimal):
-        self.bid_order_id = bid_order_id
-        self.ask_order_id = ask_order_id
+        
+        self.bid_order_id = order_a.id if order_a.side == OrderSide.BID else order_b.id
+        self.ask_order_id = order_a.id if order_a.side == OrderSide.ASK else order_b.id
         self.side = aggressor_side
         self.price = price
         self.volume = volume
