@@ -8,23 +8,23 @@ from src.order import *
 from src.tradesbook import *
 
 
+order_bid = Order(
+    side=OrderSide.BID,
+    price=10.54,
+    volume=100,
+    order_type=OrderType.LIMIT
+)
+
+order_ask = Order(
+    side=OrderSide.ASK,
+    price=10.54,
+    volume=200,
+    order_type=OrderType.LIMIT
+)
+
 def test_trade_creation():
-    order_a = Order(
-        side=OrderSide.BID,
-        price=10.54,
-        volume=100,
-        order_type=OrderType.LIMIT
-    )
-    
-    order_b = Order(
-        side=OrderSide.ASK,
-        price=10.54,
-        volume=200,
-        order_type=OrderType.LIMIT
-    )
-    
     trade = Trade(
-        order_a, order_b,
+        order_ask, order_bid,
         OrderSide.BID,
         Decimal('10.54'), Decimal('100')
     )
@@ -36,5 +36,17 @@ def test_trade_creation():
     
 
 def test_tradebook_creation():
-    pass
+    tb = TradesBook()
+    
+    for side in [OrderSide.BID, OrderSide.ASK, OrderSide.BID]:
+        tb.add(
+            Trade(
+                order_ask, order_bid,
+                side,
+                Decimal('10.54'), Decimal('100'))
+        )
+        
+    assert tb is not None
+    assert len(tb) == 3
+        
     
