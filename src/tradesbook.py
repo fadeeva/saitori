@@ -20,6 +20,11 @@ class Trade:
         self.id = str(uuid.uuid4())
         self.timestamp = datetime.now()
     
+    def __str__(self):
+        return f'#{self.id[:8]} | {datetime.fromtimestamp(timestamp)} \
+                 | {self.bid_order_id[:8]} | {self.ask_order_id[:8]} \
+                 | {self.aggressor_side} | {self.price} | {self.volume}'
+    
 
 class TradesBook:
     def __init__(self):
@@ -30,5 +35,6 @@ class TradesBook:
     
     def __len__(self):
         return len(self._trades)
+    
 
 
