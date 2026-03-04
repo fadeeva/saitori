@@ -247,4 +247,33 @@ def test_FOK_execution():
     
     assert len(ob) == 2
     assert ob.best_ask is None
+
+    
+def test_IOC_execution():
+    ob = OrderBook()
+    
+    limit_sell = Order(
+        side=OrderSide.ASK,
+        price=Decimal('100.00'),
+        volume=Decimal('80'),
+        order_type=OrderType.LIMIT,
+        time_in_force=OrderTIF.GTC
+    )
+    
+    ob.add(limit_sell)
+    
+    limit_buy = Order(
+        side=OrderSide.BID,
+        price=Decimal('100.00'),
+        volume=Decimal('100'),
+        order_type=OrderType.LIMIT,
+        time_in_force=OrderTIF.IOC
+    )
+    
+    ob.add(limit_buy)
+    
+    assert len(ob) == 0
+    assert ob.best_bid is None
+    assert ob.best_ask is None
+    assert len(ob.trades_book) == 1
     
