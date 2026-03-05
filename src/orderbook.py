@@ -84,7 +84,7 @@ class OrderBook:
                   and self._best_or_equal(order, opposite_side.peek().price):
                 self._execute_matched_orders(order, opposite_side.peek(), same_side, opposite_side)
                 
-        if order.remaining_volume > 0 and order.time_in_force is not OrderTIF.IOC:
+        if order.remaining_volume > 0 and order.time_in_force not in [OrderTIF.IOC, OrderTIF.FOK]:
                 same_side.push(order)
 
                 
