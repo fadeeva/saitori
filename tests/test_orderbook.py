@@ -276,4 +276,30 @@ def test_IOC_execution():
     assert ob.best_bid is None
     assert ob.best_ask is None
     assert len(ob.trades_book) == 1
+
+    
+def test_mixed_orders_execution():
+    ob = OrderBook()
+    
+    orders = [
+        (OrderSide.ASK, Decimal('110.00'), Decimal(150), OrderTIF.GTC),
+        (OrderSide.BID, Decimal('105.00'), Decimal(10), OrderTIF.FOK),
+        (OrderSide.ASK, Decimal('110.00'), Decimal(20), OrderTIF.IOC),
+        (OrderSide.ASK, Decimal('115.00'), Decimal(30), OrderTIF.FOK),
+        (OrderSide.BID, Decimal('120.00'), Decimal(90), OrderTIF.IOC),
+    ]
+    
+    for side, price, volume, tif in orders:
+        ob.add(
+            Order(
+                side=side,
+                price=price,
+                volume=volume,
+                order_type=OrderType.LIMIT,
+                time_in_force=tif
+            )
+        )
+        
+    assert len(ob) == 1
+    assert ob.best_ask.remaining_volume == Decimal(60)
     
