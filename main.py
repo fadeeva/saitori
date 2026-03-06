@@ -69,33 +69,25 @@ def demo_orderbook():
     ob = OrderBook()
     
     orders = [
-        (Decimal('120.00'), Decimal(50)),
-        (Decimal('115.00'), Decimal(30)),
-        (Decimal('110.00'), Decimal(20)),
-        (Decimal('105.00'), Decimal(10)),
-        (Decimal('100.00'), Decimal(5)),
+        (OrderSide.ASK, Decimal('130.00'), Decimal(50)),
+        (OrderSide.ASK, Decimal('130.00'), Decimal(30)),
+        (OrderSide.ASK, Decimal('130.00'), Decimal(20)),
+        
+        (OrderSide.BID, Decimal('120.00'), Decimal(50)),
+        (OrderSide.BID, Decimal('120.00'), Decimal(30)),
+        (OrderSide.BID, Decimal('120.00'), Decimal(20)),
     ]
     
-    for price, volume in orders:
+    for side, price, volume in orders:
         ob.add(
             Order(
-                side=OrderSide.BID,
+                side=side,
                 price=price,
                 volume=volume,
                 order_type=OrderType.LIMIT,
                 time_in_force=OrderTIF.GTC
             )
         )
-    
-    limit_sell = Order(
-        side=OrderSide.ASK,
-        price=Decimal('110.00'),
-        volume=Decimal('120'),
-        order_type=OrderType.LIMIT,
-        time_in_force=OrderTIF.IOC
-    )
-    
-    ob.add(limit_sell)
     
     print(ob)
 
