@@ -33,9 +33,9 @@ class OrdersStack:
     def __len__(self) -> int:
         return len(self._orders)
     
-    def __str__(self):
-        r = [o.__repr__() + '\n' for o in self._orders]
-        return ''.join(r)
+#    def __str__(self):
+#        r = [o.__repr__() + '\n' for o in self._orders]
+#        return ''.join(r)
 
 
 # from lowest to highest 
@@ -140,7 +140,8 @@ class OrderBook:
     
     
     def __str__(self):
-        return f'{str(self.asks)} \n{str(self.bids)}'
+        r = [a.__str__() + ' || ' + b.__str__() + '\n' for a, b in zip(self.asks, self.bids)]
+        return ''.join(r)
             
     
 

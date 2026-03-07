@@ -141,5 +141,6 @@ class Order:
     
     def __repr__(self) -> str:
         price_str = f'${self.price}' if self.price else '[MARKET]'
-        return f'ORDER: #{self.id[:8]} | {self.side.value} | rem/start vol: {self.remaining_volume} / {self.volume} | {price_str} | {self.status.value}'
+#        return f'ORDER: #{self.id[:8]} | {self.side.value} | rem/start vol: {self.remaining_volume} / {self.volume} | {price_str} | {self.status.value}'
+        return f'#{self.id[:8]} | {self.side.value} | {self.remaining_volume} / {self.volume} | {price_str}'
     
