@@ -30,7 +30,7 @@ class OrdersStack:
                 levels[o.price] = Decimal('0')
             levels[o.price] += o.remaining_volume
         
-        return list(levels.items())
+        return list(levels.items())[:depth]
             
     
     def __iter__(self) -> Iterator[Order]:
@@ -135,11 +135,11 @@ class OrderBook:
             opposite_side.pop()
     
     
-    def get_bid_levels(self):
-        return self.bids.get_levels()
+    def get_bid_levels(self, depth: int=5) -> List[Tuple[Decimal, Decimal]]:
+        return self.bids.get_levels(depth)
     
-    def get_ask_levels(self):
-        return self.asks.get_levels()
+    def get_ask_levels(self, depth: int=5) -> List[Tuple[Decimal, Decimal]]:
+        return self.asks.get_levels(depth)
     
     
     @property
