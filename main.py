@@ -71,11 +71,17 @@ def demo_orderbook():
     orders = [
         (OrderSide.ASK, Decimal('130.00'), Decimal(50)),
         (OrderSide.ASK, Decimal('130.00'), Decimal(30)),
-        (OrderSide.ASK, Decimal('130.00'), Decimal(20)),
+        (OrderSide.ASK, Decimal('120.00'), Decimal(20)),
+        (OrderSide.ASK, Decimal('120.00'), Decimal(50)),
+        (OrderSide.ASK, Decimal('100.00'), Decimal(30)),
+        (OrderSide.ASK, Decimal('100.00'), Decimal(20)),
         
         (OrderSide.BID, Decimal('120.00'), Decimal(50)),
         (OrderSide.BID, Decimal('120.00'), Decimal(30)),
         (OrderSide.BID, Decimal('120.00'), Decimal(20)),
+        (OrderSide.BID, Decimal('110.00'), Decimal(50)),
+        (OrderSide.BID, Decimal('110.00'), Decimal(30)),
+        (OrderSide.BID, Decimal('100.00'), Decimal(20)),
     ]
     
     for side, price, volume in orders:
@@ -89,7 +95,9 @@ def demo_orderbook():
             )
         )
     
-    print(ob)
+    print(ob.get_bid_levels())
+    print('*'*20)
+    print(ob.get_ask_levels())
 
 
 def main():

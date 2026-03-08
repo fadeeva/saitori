@@ -23,6 +23,16 @@ class OrdersStack:
     def volume(self) -> Decimal:
         return sum(o.volume for o in self._orders)
     
+    def get_levels(self, depth: int=5) -> List[Tuple[Decimal, Decimal]]:
+        levels = {}
+        for o in self._orders:
+            if o.price not in levels:
+                levels[o.price] = Decimal('0')
+            levels[o.price] += o.remaining_volume
+        
+        return list(levels.items())
+            
+    
     def __iter__(self) -> Iterator[Order]:
         return iter(self._orders)
     
@@ -123,6 +133,13 @@ class OrderBook:
         
         if existing.remaining_volume == 0:
             opposite_side.pop()
+    
+    
+    def get_bid_levels(self):
+        return self.bids.get_levels()
+    
+    def get_ask_levels(self):
+        return self.asks.get_levels()
     
     
     @property
