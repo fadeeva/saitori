@@ -96,8 +96,11 @@ def demo_orderbook():
         )
     
     print(ob.get_bid_levels())
-    print('*'*20)
+    print('*'*50)
     print(ob.get_ask_levels())
+    print('*'*50)
+    print(ob.best_ask.price, ob.best_bid.price)
+    print(ob.spread)
 
 
 def main():

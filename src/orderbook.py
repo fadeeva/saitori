@@ -150,6 +150,11 @@ class OrderBook:
         return self.bids.peek()
     
     
+    @property
+    def spread(self) -> Decimal:
+        return self.best_ask.price - self.best_bid.price
+    
+    
     def __len__(self):
         return len(self.asks) + len(self.bids)
     
