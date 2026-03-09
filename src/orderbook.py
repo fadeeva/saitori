@@ -1,6 +1,7 @@
 from decimal import Decimal
 from typing import Literal, List, Optional, Union, Dict, Tuple, Iterator
 import bisect
+from collections import defaultdict
 
 from src.order import Order, OrderStatus, OrderType, OrderSide, OrderTIF, OrderErrorMessages
 from src.tradesbook import Trade, TradesBook
@@ -24,15 +25,12 @@ class OrdersStack:
         return sum(o.volume for o in self._orders)
     
     def get_levels(self, depth: int=5) -> List[Tuple[Decimal, Decimal]]:
-        levels = {}
+        levels = defaultdict(Decimal)
         for o in self._orders:
-            if o.price not in levels:
-                levels[o.price] = Decimal('0')
             levels[o.price] += o.remaining_volume
         
         return list(levels.items())[:depth]
             
-    
     def __iter__(self) -> Iterator[Order]:
         return iter(self._orders)
     
