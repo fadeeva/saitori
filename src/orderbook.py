@@ -30,7 +30,10 @@ class OrdersStack:
             levels[o.price] += o.remaining_volume
         
         return list(levels.items())[:depth]
-            
+    
+    def clear(self) -> None:
+        self._orders.clear()
+    
     def __iter__(self) -> Iterator[Order]:
         return iter(self._orders)
     
@@ -138,6 +141,11 @@ class OrderBook:
     
     def get_ask_levels(self, depth: int=5) -> List[Tuple[Decimal, Decimal]]:
         return self.asks.get_levels(depth)
+    
+    
+    def clear(self) -> None:
+        self.asks.clear()
+        self.bids.clear()
     
     
     @property
