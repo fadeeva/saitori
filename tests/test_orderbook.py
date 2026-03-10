@@ -302,4 +302,30 @@ def test_mixed_orders_execution():
         
     assert len(ob) == 1
     assert ob.best_ask.remaining_volume == Decimal(60)
+
     
+def test_clear_orderbook():
+    ob = OrderBook()
+    
+    orders = [
+        (Decimal('100.00'), Decimal(5)),
+        (Decimal('105.00'), Decimal(10)),
+        (Decimal('110.00'), Decimal(20)),
+        (Decimal('115.00'), Decimal(30)),
+        (Decimal('120.00'), Decimal(50)),
+    ]
+    
+    for price, volume in orders:
+        ob.add(
+            Order(
+                side=OrderSide.ASK,
+                price=price,
+                volume=volume,
+                order_type=OrderType.LIMIT,
+                time_in_force=OrderTIF.GTC
+            )
+        )
+    
+    assert len(ob) == 5
+    ob.clear()
+    assert len(ob) == 0
