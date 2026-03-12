@@ -1,9 +1,33 @@
 from decimal import Decimal
 from typing import Literal, List, Optional, Union, Dict, Tuple, Iterator
 from collections import defaultdict
-import copy
+from dataclasses import dataclass
+from datetime import datetime
 
 from order import Order, OrderStatus, OrderType, OrderSide, OrderTIF, OrderErrorMessages # добавить src. позже в начало, а то нихуя работать не будет
+
+
+@dataclass(frozen=True)
+class OrderSnapshot:
+#    order_id: str
+    status: str
+    volume: Decimal
+    price: Decimal
+    executed_volume: Decimal
+    remaining_volume: Decimal
+    timestamp: datetime
+
+    @classmethod
+    def from_order(cls, order: Order):
+        return cls(
+#            order_id=order.id,
+            status=order.status.value,
+            volume=order.volume,
+            price=order.price,
+            executed_volume=order.executed_volume,
+            remaining_volume=order.remaining_volume,
+            timestamp=datetime.now()
+        )
 
 
 class OrderLogger:
@@ -11,14 +35,14 @@ class OrderLogger:
         self._logs: defaultdict[str, List[Order]] = defaultdict(list)
     
     def add(self, order: Order):
-        self._logs[order.id].append(copy.deepcopy(order)) # нужно будет доавить dataclass для snapshots? нужно думать
+        self._logs[order.id].append(OrderSnapshot.from_order(order))
     
     def __str__(self):
         out = 'LOGGER:\n'
         for key, values in self._logs.items():
-            out += f'{key}\n'
+            out += f'ID: {key}\n'
             for o in values:
-                out += f'{o.get()}\n'
+                out += f'\t{o}\n'
         
         return out
     
