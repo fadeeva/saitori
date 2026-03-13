@@ -9,8 +9,10 @@ from order import Order, OrderStatus, OrderType, OrderSide, OrderTIF, OrderError
 
 @dataclass(frozen=True)
 class OrderSnapshot:
-#    order_id: str
     status: str
+    side: str
+    type: str
+    tif: str
     volume: Decimal
     price: Decimal
     executed_volume: Decimal
@@ -19,9 +21,12 @@ class OrderSnapshot:
 
     @classmethod
     def from_order(cls, order: Order):
+        # check price for stop order
         return cls(
-#            order_id=order.id,
             status=order.status.value,
+            side=order.side.value,
+            type=order.order_type.value,
+            tif=order.time_in_force.value,
             volume=order.volume,
             price=order.price,
             executed_volume=order.executed_volume,
