@@ -15,13 +15,13 @@ class OrderSnapshot:
     tif: str
     volume: Decimal
     price: Decimal
+    stop_price: Decimal
     executed_volume: Decimal
     remaining_volume: Decimal
     timestamp: datetime
 
     @classmethod
     def from_order(cls, order: Order):
-        # check price for stop order
         return cls(
             status=order.status.value,
             side=order.side.value,
@@ -29,6 +29,7 @@ class OrderSnapshot:
             tif=order.time_in_force.value,
             volume=order.volume,
             price=order.price,
+            stop_price=order.stop_price,
             executed_volume=order.executed_volume,
             remaining_volume=order.remaining_volume,
             timestamp=datetime.now()
