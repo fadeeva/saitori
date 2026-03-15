@@ -43,6 +43,12 @@ class OrderLogger:
     def add(self, order: Order):
         self._logs[order.id].append(OrderSnapshot.from_order(order))
     
+    def show_by_id(self, id:str) -> List[Order]:
+        return self._logs[id]
+    
+    def show(self) -> Dict[str, List[Order]]:
+        return dict(self._logs)
+    
     def __str__(self):
         out = 'LOGGER:\n'
         for key, values in self._logs.items():
@@ -61,4 +67,8 @@ o.status = OrderStatus.FILLED
 ol.add(o)
 
 print(ol)
+
+print(ol.show_by_id(o.id))
+
+print(ol.show())
         
