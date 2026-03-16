@@ -1,10 +1,10 @@
+from dataclasses import dataclass
+from datetime import datetime
 from decimal import Decimal
 from typing import Literal, List, Optional, Union, Dict, Tuple, Iterator
 from collections import defaultdict
-from dataclasses import dataclass
-from datetime import datetime
 
-from order import Order, OrderStatus, OrderType, OrderSide, OrderTIF, OrderErrorMessages # добавить src. позже в начало, а то нихуя работать не будет
+from src.order import Order, OrderStatus, OrderType, OrderSide, OrderTIF, OrderErrorMessages
 
 
 @dataclass(frozen=True)
@@ -49,26 +49,13 @@ class OrderLogger:
     def show(self) -> Dict[str, List[Order]]:
         return dict(self._logs)
     
-    def __str__(self):
-        out = 'LOGGER:\n'
-        for key, values in self._logs.items():
-            out += f'ID: {key}\n'
-            for o in values:
-                out += f'\t{o}\n'
-        
-        return out
+#    def __str__(self):
+#        out = 'LOGGER:\n'
+#        for key, values in self._logs.items():
+#            out += f'ID: {key}\n'
+#            for o in values:
+#                out += f'\t{o}\n'
+#        
+#        return out
     
-    
-
-ol = OrderLogger()
-o = Order(side=OrderSide.BID, price=100, volume=100)
-ol.add(o)
-o.status = OrderStatus.FILLED
-ol.add(o)
-
-print(ol)
-
-print(ol.show_by_id(o.id))
-
-print(ol.show())
         
