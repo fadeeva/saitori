@@ -89,6 +89,7 @@ class OrderBook:
 
         if best_opposite:
             if order.time_in_force is OrderTIF.FOK and not self._is_enough_volume(order, opposite_side):
+                order.cancel()
                 return
                 
             while order.remaining_volume \
