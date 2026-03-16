@@ -1,16 +1,19 @@
 import pytest
 from datetime import datetime
 from src.order import Order, OrderStatus, OrderType, OrderSide, OrderTIF, OrderErrorMessages
+from src.orderlogger import *
 
+
+logger = OrderLogger()
 
 def test_order_creation_limit():
     ''' Test for limit order '''
-    
     order = Order(
         side=OrderSide.BID,
         price=10.54,
         volume=100,
-        order_type=OrderType.LIMIT
+        order_type=OrderType.LIMIT,
+        logger=logger
     )
     
     assert order.side == OrderSide.BID
@@ -29,7 +32,8 @@ def test_order_creation_market():
     order = Order(
         side=OrderSide.ASK,
         volume=55,
-        order_type=OrderType.MARKET
+        order_type=OrderType.MARKET,
+        logger=logger
     )
     
     assert order.side == OrderSide.ASK
@@ -46,7 +50,8 @@ def test_order_creation_stop():
         price=105,
         stop_price=106.55,
         volume=150,
-        order_type=OrderType.STOP
+        order_type=OrderType.STOP,
+        logger=logger
     )
 
     assert order.side == OrderSide.BID
@@ -61,25 +66,25 @@ def test_order_creation_validation():
     
     # Limit order without price - ERROR
     with pytest.raises(ValueError, match=OrderErrorMessages.PRICE_REQUIRED.format(order_type=OrderType.LIMIT)):
-        Order(side=OrderSide.BID, volume=100, order_type=OrderType.LIMIT, price=None)
+        Order(side=OrderSide.BID, volume=100, order_type=OrderType.LIMIT, price=None, logger=logger)
     
     # Stop order without stop_price - ERROR
     with pytest.raises(ValueError, match=OrderErrorMessages.STOP_PRICE_REQUIRED.format()):
-        Order(side=OrderSide.BID, price=100, volume=100, order_type=OrderType.STOP, stop_price=None)
+        Order(side=OrderSide.BID, price=100, volume=100, order_type=OrderType.STOP, stop_price=None, logger=logger)
     
     # Stop order without price - ERROR (even if there is stop_price)
     with pytest.raises(ValueError, match=OrderErrorMessages.PRICE_REQUIRED.format(order_type=OrderType.STOP)):
-        Order(side=OrderSide.BID, price=None, stop_price=100, volume=100, order_type=OrderType.STOP)
+        Order(side=OrderSide.BID, price=None, stop_price=100, volume=100, order_type=OrderType.STOP, logger=logger)
         
     # Negative volume - ERROR
     with pytest.raises(ValueError, match=OrderErrorMessages.VOLUME_MUST_BE_POSITIVE.format(volume=-100)):
-        Order(side=OrderSide.BID, price=100, volume=-100, order_type=OrderType.LIMIT)
+        Order(side=OrderSide.BID, price=100, volume=-100, order_type=OrderType.LIMIT, logger=logger)
     
 
 def test_order_execution():
     ''' Test for partial execution '''
     
-    order = Order(side=OrderSide.BID, price=100, volume=100)
+    order = Order(side=OrderSide.BID, price=100, volume=100, logger=logger)
     
     order.execute(volume=30, price=99.95)
     
@@ -99,7 +104,7 @@ def test_order_execution():
 def test_order_execution_validation():
     ''' Test of execution validation '''
     
-    order = Order(side=OrderSide.BID, price=100, volume=100)
+    order = Order(side=OrderSide.BID, price=100, volume=100, logger=logger)
     
     # Try to execute more that it has
     with pytest.raises(ValueError, match='Cannot execute 150, remaining: 100'):
