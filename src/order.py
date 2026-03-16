@@ -1,10 +1,13 @@
 from decimal import Decimal
 from enum import Enum
 
-from typing import Literal, List, Optional, Union, Dict
+from typing import Literal, List, Optional, Union, Dict, TYPE_CHECKING
 
 from datetime import datetime
 import uuid
+
+if TYPE_CHECKING:
+    from orderlogger import OrderLogger
 
 
 class OrderErrorMessages(Enum):
@@ -54,7 +57,8 @@ class Order:
         'timestamp',
         'executed_volume',
         'last_execution_price',
-        'status'
+        'status',
+        'logger'
     )
     
     def __init__(self,
@@ -64,6 +68,8 @@ class Order:
                  order_type: OrderType=OrderType.LIMIT,
                  stop_price: Optional[Decimal]=None,
                  time_in_force: OrderTIF=OrderTIF.GTC,
+                 
+                 logger: Optional['OrderLogger']=None
                 ):
         
         self.side = side
@@ -97,6 +103,13 @@ class Order:
         self.executed_volume = 0
         self.status: OrderStatus = OrderStatus.NEW
         self.last_execution_price: Optional[Decimal] = None
+        
+        self.logger = logger
+        if self.logger is None:
+            raise ValueError(
+                'Need instance of OrderLogger.'
+            )
+        self.logger.add(self)
     
     @property
     def remaining_volume(self) -> Union[int, Decimal]:
@@ -143,4 +156,4 @@ class Order:
         price_str = f'${self.price}' if self.price else '[MARKET]'
 #        return f'ORDER: #{self.id[:8]} | {self.side.value} | rem/start vol: {self.remaining_volume} / {self.volume} | {price_str} | {self.status.value}'
         return f'#{self.id[:8]} | {self.side.value} | {self.remaining_volume} / {self.volume} | {price_str}'
-    
+
