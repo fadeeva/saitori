@@ -6,6 +6,15 @@ from src.orderlogger import *
 
 logger = OrderLogger()
 
+def test_order_without_logger():
+    with pytest.raises(ValueError, match=OrderErrorMessages.LOGGER_REQUIRED.format()):
+        Order(
+            side=OrderSide.BID,
+            price=100, volume=100,
+            order_type=OrderType.LIMIT
+            )
+        
+
 def test_order_creation_limit():
     ''' Test for limit order '''
     order = Order(
