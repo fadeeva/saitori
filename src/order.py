@@ -16,6 +16,7 @@ class OrderErrorMessages(Enum):
     STOP_PRICE_REQUIRED = 'Stop price required for stop order'
     STOP_PRICE_ONLY_FOR_STOP = 'Stop price can only be set for STOP orders'
     CANNOT_EXECUTE = 'Cannot execute {volume}, remaining: {remaining}'
+    LOGGER_REQUIRED = 'Need instance of OrderLogger'
     
     def format(self, **kwargs) -> str:
         return self.value.format(**kwargs)
@@ -107,7 +108,7 @@ class Order:
         self.logger = logger
         if self.logger is None:
             raise ValueError(
-                'Need instance of OrderLogger.'
+                OrderErrorMessages.LOGGER_REQUIRED.format()
             )
         self.logger.add(self)
     
