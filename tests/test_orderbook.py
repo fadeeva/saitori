@@ -1,8 +1,12 @@
 import pytest
 from datetime import datetime
+
 from src.order import *
 from src.orderbook import *
+from src.orderlogger import *
 
+
+logger = OrderLogger()
 
 def test_orderbook_creation():
     limit_buy = Order(
@@ -10,7 +14,8 @@ def test_orderbook_creation():
         price=Decimal('100.50'),
         volume=Decimal('100'),
         order_type=OrderType.LIMIT,
-        time_in_force=OrderTIF.GTC
+        time_in_force=OrderTIF.GTC,
+        logger=logger
     )
 
     limit_sell = Order(
@@ -18,7 +23,8 @@ def test_orderbook_creation():
         price=Decimal('110.00'),
         volume=Decimal('100'),
         order_type=OrderType.LIMIT,
-        time_in_force=OrderTIF.GTC
+        time_in_force=OrderTIF.GTC,
+        logger=logger
     )
 
     ob = OrderBook()
@@ -36,7 +42,8 @@ def test_orderbook_creation():
         price=Decimal('110.00'),
         volume=Decimal('100'),
         order_type=OrderType.MARKET,
-        time_in_force=OrderTIF.GTC
+        time_in_force=OrderTIF.GTC,
+        logger=logger
     )
     
     ob.add(marker_order) # must be ignored
@@ -61,7 +68,8 @@ def test_orderbook_execution():
                 price=price,
                 volume=volume,
                 order_type=OrderType.LIMIT,
-                time_in_force=OrderTIF.GTC
+                time_in_force=OrderTIF.GTC,
+                logger=logger
             )
         )
     
@@ -70,7 +78,8 @@ def test_orderbook_execution():
         price=Decimal('110.00'),
         volume=Decimal('120'),
         order_type=OrderType.LIMIT,
-        time_in_force=OrderTIF.GTC
+        time_in_force=OrderTIF.GTC,
+        logger=logger
     )
     
     ob.add(limit_sell)
@@ -98,7 +107,8 @@ def test_orderbook_execution():
                 price=price,
                 volume=volume,
                 order_type=OrderType.LIMIT,
-                time_in_force=OrderTIF.GTC
+                time_in_force=OrderTIF.GTC,
+                logger=logger
             )
         )
     
@@ -107,7 +117,8 @@ def test_orderbook_execution():
         price=Decimal('110.00'),
         volume=Decimal('120'),
         order_type=OrderType.LIMIT,
-        time_in_force=OrderTIF.GTC
+        time_in_force=OrderTIF.GTC,
+        logger=logger
     )
     
     ob.add(limit_sell)
@@ -141,7 +152,8 @@ def test_orderbook_execution():
                 price=price,
                 volume=volume,
                 order_type=OrderType.LIMIT,
-                time_in_force=OrderTIF.GTC
+                time_in_force=OrderTIF.GTC,
+                logger=logger
             )
         )
     
@@ -160,7 +172,8 @@ def test_FOK_execution():
         price=Decimal('110.00'),
         volume=Decimal('100'),
         order_type=OrderType.LIMIT,
-        time_in_force=OrderTIF.GTC
+        time_in_force=OrderTIF.GTC,
+        logger=logger
     )
 
     limit_sell = Order(
@@ -168,7 +181,8 @@ def test_FOK_execution():
         price=Decimal('110.00'),
         volume=Decimal('120'),
         order_type=OrderType.LIMIT,
-        time_in_force=OrderTIF.FOK
+        time_in_force=OrderTIF.FOK,
+        logger=logger
     )
 
     ob.add(limit_buy)
@@ -196,7 +210,8 @@ def test_FOK_execution():
                 price=price,
                 volume=volume,
                 order_type=OrderType.LIMIT,
-                time_in_force=OrderTIF.GTC
+                time_in_force=OrderTIF.GTC,
+                logger=logger
             )
         )
     
@@ -205,7 +220,8 @@ def test_FOK_execution():
         price=Decimal('110.00'),
         volume=Decimal('120'),
         order_type=OrderType.LIMIT,
-        time_in_force=OrderTIF.FOK
+        time_in_force=OrderTIF.FOK,
+        logger=logger
     )
     
     ob.add(limit_buy)
@@ -231,7 +247,8 @@ def test_FOK_execution():
                 price=price,
                 volume=volume,
                 order_type=OrderType.LIMIT,
-                time_in_force=OrderTIF.GTC
+                time_in_force=OrderTIF.GTC,
+                logger=logger
             )
         )
     
@@ -240,7 +257,8 @@ def test_FOK_execution():
         price=Decimal('110.00'),
         volume=Decimal('140'),
         order_type=OrderType.LIMIT,
-        time_in_force=OrderTIF.FOK
+        time_in_force=OrderTIF.FOK,
+        logger=logger
     )
     
     ob.add(limit_sell)
@@ -257,7 +275,8 @@ def test_IOC_execution():
         price=Decimal('100.00'),
         volume=Decimal('80'),
         order_type=OrderType.LIMIT,
-        time_in_force=OrderTIF.GTC
+        time_in_force=OrderTIF.GTC,
+        logger=logger
     )
     
     ob.add(limit_sell)
@@ -267,7 +286,8 @@ def test_IOC_execution():
         price=Decimal('100.00'),
         volume=Decimal('100'),
         order_type=OrderType.LIMIT,
-        time_in_force=OrderTIF.IOC
+        time_in_force=OrderTIF.IOC,
+        logger=logger
     )
     
     ob.add(limit_buy)
@@ -296,7 +316,8 @@ def test_mixed_orders_execution():
                 price=price,
                 volume=volume,
                 order_type=OrderType.LIMIT,
-                time_in_force=tif
+                time_in_force=tif,
+                logger=logger
             )
         )
         
@@ -322,7 +343,8 @@ def test_clear_orderbook():
                 price=price,
                 volume=volume,
                 order_type=OrderType.LIMIT,
-                time_in_force=OrderTIF.GTC
+                time_in_force=OrderTIF.GTC,
+                logger=logger
             )
         )
     
