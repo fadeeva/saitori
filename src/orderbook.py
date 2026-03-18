@@ -1,17 +1,20 @@
 from decimal import Decimal
-from typing import Literal, List, Optional, Union, Dict, Tuple, Iterator
+from typing import Literal, List, Optional, Union, Dict, Tuple, Iterator, TYPE_CHECKING
 import bisect
 from collections import defaultdict
 
-from src.order import Order, OrderStatus, OrderType, OrderSide, OrderTIF, OrderErrorMessages
+if TYPE_CHECKING:
+    from order import Order
+
+from src.order import OrderType, OrderSide, OrderTIF
 from src.tradesbook import Trade, TradesBook
 
 
 class OrdersStack:
     def __init__(self):
-        self._orders: List[Order] = []
+        self._orders: List['Order'] = []
     
-    def peek(self) -> Optional[Order]:
+    def peek(self) -> Optional['Order']:
         return self._orders[-1] if self._orders else None
     
     def pop(self) -> None:
@@ -34,7 +37,7 @@ class OrdersStack:
     def clear(self) -> None:
         self._orders.clear()
     
-    def __iter__(self) -> Iterator[Order]:
+    def __iter__(self) -> Iterator['Order']:
         return iter(self._orders)
     
     def __reversed__(self):
@@ -54,7 +57,7 @@ class AskOrders(OrdersStack):
     def __init__(self):
         super().__init__()
     
-    def push(self, order: Order) -> None:
+    def push(self, order: 'Order') -> None:
         idx = bisect.bisect_right([-o.price for o in self._orders], -order.price)
         self._orders.insert(idx, order)
     
@@ -64,7 +67,7 @@ class BidOrders(OrdersStack):
     def __init__(self):
         super().__init__()
     
-    def push(self, order: Order) -> None:
+    def push(self, order: 'Order') -> None:
         idx = bisect.bisect_right([o.price for o in self._orders], order.price)
         self._orders.insert(idx, order)
 
@@ -76,7 +79,7 @@ class OrderBook:
         self.trades_book = TradesBook()
     
     
-    def add(self, order: Order) -> None:
+    def add(self, order: 'Order') -> None:
         if order.order_type not in [OrderType.LIMIT, OrderType.STOP]:
             return
         
@@ -98,10 +101,10 @@ class OrderBook:
                 self._execute_matched_orders(order, opposite_side.peek(), same_side, opposite_side)
                 
         if order.remaining_volume > 0 and order.time_in_force not in [OrderTIF.IOC, OrderTIF.FOK]:
-                same_side.push(order)
+            same_side.push(order)
 
                 
-    def _is_enough_volume(self, order: Order, opposite_side: List[Order]) -> bool:
+    def _is_enough_volume(self, order: 'Order', opposite_side: List['Order']) -> bool:
         existing_volume = 0
         for o in reversed(opposite_side):
             if self._best_or_equal(order, o.price):
@@ -112,7 +115,7 @@ class OrderBook:
         return order.volume <= existing_volume
     
     
-    def _best_or_equal(self, order: Order, opposite_price: Decimal) -> bool:
+    def _best_or_equal(self, order: 'Order', opposite_price: Decimal) -> bool:
         if order.side == OrderSide.ASK:
             return order.price <= opposite_price
         else:
@@ -120,7 +123,7 @@ class OrderBook:
     
     
     def _execute_matched_orders(self,
-                                incoming: Order, existing: Order,
+                                incoming: 'Order', existing: 'Order',
                                 same_side: OrdersStack, opposite_side: OrdersStack) -> None:
         
         volume = min(incoming.remaining_volume, existing.remaining_volume)
@@ -150,12 +153,12 @@ class OrderBook:
     
     
     @property
-    def best_ask(self) -> Optional[Order]:
+    def best_ask(self) -> Optional['Order']:
         return self.asks.peek()
     
     
     @property
-    def best_bid(self) -> Optional[Order]:
+    def best_bid(self) -> Optional['Order']:
         return self.bids.peek()
     
     
