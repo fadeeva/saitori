@@ -47,6 +47,8 @@ class OrderTIF(Enum): # Time Force
     
 
 class Order:
+    '''Order with support for various types and status tracking.'''
+    
     __slots__ = (
         'id',
         'side',

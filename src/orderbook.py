@@ -11,6 +11,8 @@ from src.tradesbook import Trade, TradesBook
 
 
 class OrdersStack:
+    '''Base class for price-sorted order containers (bids/asks).'''
+    
     def __init__(self):
         self._orders: List['Order'] = []
     
@@ -52,8 +54,9 @@ class OrdersStack:
 #        return ''.join(r)
 
 
-# from lowest to highest 
 class AskOrders(OrdersStack):
+    '''Ask orders sorted from lowest to highest price.'''
+    
     def __init__(self):
         super().__init__()
     
@@ -62,8 +65,9 @@ class AskOrders(OrdersStack):
         self._orders.insert(idx, order)
     
 
-# from highest to lowest
 class BidOrders(OrdersStack):
+    '''Bid orders sorted from highest to lowest price.'''
+    
     def __init__(self):
         super().__init__()
     
@@ -73,6 +77,8 @@ class BidOrders(OrdersStack):
 
         
 class OrderBook:
+    '''Order book matching bids and asks with price-time priority.'''
+    
     def __init__(self):
         self.asks = AskOrders()
         self.bids = BidOrders()

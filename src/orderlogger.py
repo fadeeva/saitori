@@ -9,6 +9,8 @@ from src.order import Order, OrderStatus, OrderType, OrderSide, OrderTIF, OrderE
 
 @dataclass(frozen=True)
 class OrderSnapshot:
+    '''Single snapshot from order'''
+    
     status: str
     side: str
     type: str
@@ -37,6 +39,8 @@ class OrderSnapshot:
 
 
 class OrderLogger:
+    '''Records all order snapshots for audit and analysis.'''
+    
     def __init__(self):
         self._logs: defaultdict[str, List[Order]] = defaultdict(list)
     

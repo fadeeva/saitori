@@ -6,6 +6,8 @@ from src.order import Order, OrderSide
 
 
 class Trade:
+    '''Single executed trade between two orders.'''
+    
     def __init__(self,
                  order_a: Order, order_b: Order,
                  aggressor_side: OrderSide,
@@ -27,6 +29,8 @@ class Trade:
     
 
 class TradesBook:
+    '''Collection of all executed trades with query methods.'''
+    
     def __init__(self):
         self._trades = []
     
