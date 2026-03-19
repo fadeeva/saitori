@@ -6,20 +6,25 @@ import uuid
 
 from src.order import *
 from src.tradesbook import *
+from src.orderlogger import *
 
+
+logger = OrderLogger()
 
 order_bid = Order(
     side=OrderSide.BID,
     price=10.54,
     volume=100,
-    order_type=OrderType.LIMIT
+    order_type=OrderType.LIMIT,
+    logger=logger
 )
 
 order_ask = Order(
     side=OrderSide.ASK,
     price=10.54,
     volume=200,
-    order_type=OrderType.LIMIT
+    order_type=OrderType.LIMIT,
+    logger=logger
 )
 
 def test_trade_creation():
