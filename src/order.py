@@ -133,12 +133,14 @@ class Order:
             self.status = OrderStatus.FILLED
         elif self.executed_volume > 0:
             self.status = OrderStatus.PARTIALLY_FILLED
-        
+            
         self.last_execution_price = price
+        self.logger.add(self)
     
     def cancel(self) -> None:
         if self.status not in [OrderStatus.FILLED, OrderStatus.CANCELLED]:
             self.status = OrderStatus.CANCELLED
+            self.logger.add(self)
     
     def get(self)->dict:
         return {
