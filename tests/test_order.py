@@ -42,6 +42,7 @@ def test_order_creation_market():
         side=OrderSide.ASK,
         volume=55,
         order_type=OrderType.MARKET,
+        time_in_force=OrderTIF.FOK,
         logger=logger
     )
     
@@ -88,6 +89,10 @@ def test_order_creation_validation():
     # Negative volume - ERROR
     with pytest.raises(ValueError, match=OrderErrorMessages.VOLUME_MUST_BE_POSITIVE.format(volume=-100)):
         Order(side=OrderSide.BID, price=100, volume=-100, order_type=OrderType.LIMIT, logger=logger)
+        
+    # Market order can't be GTC(default value) - ERROR
+    with pytest.raises(ValueError, match=OrderErrorMessages.MARKET_GTC_INVALID.format()):
+        Order(side=OrderSide.BID, price=100, volume=100, order_type=OrderType.MARKET, logger=logger)
     
 
 def test_order_execution():
