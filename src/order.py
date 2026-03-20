@@ -17,6 +17,7 @@ class OrderErrorMessages(Enum):
     STOP_PRICE_ONLY_FOR_STOP = 'Stop price can only be set for STOP orders'
     CANNOT_EXECUTE = 'Cannot execute {volume}, remaining: {remaining}'
     LOGGER_REQUIRED = 'Need instance of OrderLogger'
+    MARKET_GTC_INVALID = 'Market order cannot have GTC. Use IOC or FOK'
     
     def format(self, **kwargs) -> str:
         return self.value.format(**kwargs)
@@ -79,6 +80,11 @@ class Order:
         self.volume = volume
         self.order_type = order_type
         self.time_in_force = time_in_force
+        
+        if self.order_type==OrderType.MARKET and self.time_in_force==OrderTIF.GTC:
+            raise ValueError(
+                OrderErrorMessages.MARKET_GTC_INVALID.format()
+            )
         
         if order_type==OrderType.MARKET:
             self.price = None
