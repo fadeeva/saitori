@@ -122,6 +122,8 @@ class OrderBook:
     
     
     def _best_or_equal(self, order: 'Order', opposite_price: Decimal) -> bool:
+        if order.order_type == OrderType.MARKET: return True
+        
         if order.side == OrderSide.ASK:
             return order.price <= opposite_price
         else:
