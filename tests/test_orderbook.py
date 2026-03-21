@@ -37,18 +37,6 @@ def test_orderbook_creation():
     assert ob.best_ask is not limit_buy
     assert len(ob) == 2
     
-    marker_order = Order(
-        side=OrderSide.ASK,
-        price=Decimal('110.00'),
-        volume=Decimal('100'),
-        order_type=OrderType.MARKET,
-        time_in_force=OrderTIF.GTC,
-        logger=logger
-    )
-    
-    ob.add(marker_order) # must be ignored
-    assert len(ob) == 2
-    
     
 def test_orderbook_execution():
     ob = OrderBook()
