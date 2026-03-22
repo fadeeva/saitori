@@ -334,6 +334,7 @@ def test_market_order_execution():
             )
         )
     
+    # FOK-order
     market_order = Order(
         side=OrderSide.BID,
         volume=25,
@@ -347,6 +348,34 @@ def test_market_order_execution():
     assert len(ob) == 2
     assert ob.best_bid is None
     assert ob.best_ask.remaining_volume == Decimal(10)
+    
+    ob.clear()
+    for price, volume in orders:
+        ob.add(
+            Order(
+                side=OrderSide.ASK,
+                price=price,
+                volume=volume,
+                order_type=OrderType.LIMIT,
+                time_in_force=OrderTIF.GTC,
+                logger=logger
+            )
+        )
+    
+    # IOC-order
+    market_order = Order(
+        side=OrderSide.BID,
+        volume=125,
+        order_type=OrderType.MARKET,
+        time_in_force=OrderTIF.IOC,
+        logger=logger
+    )
+    
+    ob.add(market_order)
+    
+    assert len(ob) == 0
+    assert market_order.status == OrderStatus.PARTIALLY_FILLED
+    
     
     
 def test_clear_orderbook():
