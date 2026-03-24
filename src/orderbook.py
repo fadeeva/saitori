@@ -10,31 +10,11 @@ from src.order import OrderType, OrderSide, OrderTIF
 from src.tradesbook import Trade, TradesBook
 
 
-class OrdersStack:
-    '''Base class for price-sorted order containers (bids/asks).'''
+class Stack:
+    ''' Base class for limit and stop orders '''
     
     def __init__(self):
         self._orders: List['Order'] = []
-    
-    def peek(self) -> Optional['Order']:
-        return self._orders[-1] if self._orders else None
-    
-    def pop(self) -> None:
-        self._orders.pop()
-    
-    def show(self) -> List[dict]:
-        return [o.get() for o in self._orders]
-    
-    @property
-    def volume(self) -> Decimal:
-        return sum(o.volume for o in self._orders)
-    
-    def get_levels(self, depth: int=5) -> List[Tuple[Decimal, Decimal]]:
-        levels = defaultdict(Decimal)
-        for o in self._orders:
-            levels[o.price] += o.remaining_volume
-        
-        return list(levels.items())[:depth]
     
     def clear(self) -> None:
         self._orders.clear()
@@ -49,9 +29,39 @@ class OrdersStack:
     def __len__(self) -> int:
         return len(self._orders)
     
-#    def __str__(self):
-#        r = [o.__repr__() + '\n' for o in self._orders]
-#        return ''.join(r)
+    def show(self) -> List[dict]:
+        return [o.get() for o in self._orders]
+    
+    
+class OrdersStack(Stack):
+    '''Base class for price-sorted order containers (bids/asks).'''
+    
+    def __init__(self):
+        super().__init__()
+    
+    def peek(self) -> Optional['Order']:
+        return self._orders[-1] if self._orders else None
+    
+    def pop(self) -> None:
+        self._orders.pop()
+    
+    @property
+    def volume(self) -> Decimal:
+        return sum(o.volume for o in self._orders)
+    
+    def get_levels(self, depth: int=5) -> List[Tuple[Decimal, Decimal]]:
+        levels = defaultdict(Decimal)
+        for o in self._orders:
+            levels[o.price] += o.remaining_volume
+        
+        return list(levels.items())[:depth]
+    
+
+class StopOrdersStack(Stack):
+    '''Base class for stop orders.'''
+    
+    def __init__(self):
+        super().__init__()
 
 
 class AskOrders(OrdersStack):
@@ -83,12 +93,11 @@ class OrderBook:
         self.asks = AskOrders()
         self.bids = BidOrders()
         self.trades_book = TradesBook()
+        
+        self.last_trade_price: Optional[Decimal] = None
     
     
     def add(self, order: 'Order') -> None:
-#        if order.order_type not in [OrderType.LIMIT, OrderType.STOP]:
-#            return
-        
         if order.side == OrderSide.ASK:
             opposite_side, same_side = self.bids, self.asks
         else:
@@ -140,6 +149,9 @@ class OrderBook:
         incoming.execute(volume=volume, price=price)
         existing.execute(volume=volume, price=price)
         
+        self.last_trade_price = price
+#        self._check_stop_orders()
+        
         self.trades_book.add(
             Trade(incoming, existing, incoming.side, price, volume)
         )
@@ -147,6 +159,9 @@ class OrderBook:
         if existing.remaining_volume == 0:
             opposite_side.pop()
     
+    
+    def _check_stop_orders():
+        pass
     
     def get_bid_levels(self, depth: int=5) -> List[Tuple[Decimal, Decimal]]:
         return self.bids.get_levels(depth)
