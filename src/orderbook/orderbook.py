@@ -4,7 +4,7 @@ import bisect
 from collections import defaultdict
 
 if TYPE_CHECKING:
-    from order import Order
+    from .order import Order
 
 from src.order import OrderType, OrderSide, OrderTIF
 from src.tradesbook import Trade, TradesBook
