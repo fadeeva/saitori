@@ -2,14 +2,16 @@ from decimal import Decimal
 
 try:
     from src.order import Order, OrderStatus, OrderType, OrderSide, OrderTIF, OrderErrorMessages
-    from src.orderbook import OrderBook, BidOrders, AskOrders, OrdersStack
+    from src.orderbook.orderbook import OrderBook, BidOrders, AskOrders, OrdersStack
+    from src.orderlogger import *
     
     IMPORT_SUCCESS = True
 except ImportError as e:
     print(f'Import Error: {e}.')
     IMPORT_SUCCESS = False
     
-    
+logger = OrderLogger()
+
 def demo_create_orders():
     print('=' * 60)
     print('Create ORDERS')
@@ -22,7 +24,8 @@ def demo_create_orders():
         price=Decimal('100.50'),
         volume=Decimal('100'),
         order_type=OrderType.LIMIT,
-        time_in_force=OrderTIF.GTC
+        time_in_force=OrderTIF.GTC,
+        logger=logger
     )
     print(f'\t{limit_buy}')
     print(f'\tDATA: {limit_buy.get()}')
@@ -34,7 +37,8 @@ def demo_create_orders():
         price=Decimal('101.25'),
         volume=Decimal('50'),
         order_type=OrderType.LIMIT,
-        time_in_force=OrderTIF.IOC
+        time_in_force=OrderTIF.IOC,
+        logger=logger
     )
     print(f'\t{limit_sell}')
     
@@ -44,7 +48,8 @@ def demo_create_orders():
         side=OrderSide.BID,
         volume=Decimal('75'),
         order_type=OrderType.MARKET,
-        time_in_force=OrderTIF.FOK
+        time_in_force=OrderTIF.FOK,
+        logger=logger
     )
     print(f'\t{market_buy}')
     print(f'\tPrice: {market_buy.price} (market order have not price)')
@@ -57,7 +62,8 @@ def demo_create_orders():
         stop_price=Decimal('96.00'),
         volume=Decimal('100'),
         order_type=OrderType.STOP,
-        time_in_force=OrderTIF.GTC
+        time_in_force=OrderTIF.GTC,
+        logger=logger
     )
     print(f'\t{stop_order}')
     print(f'\tStop-price: {stop_order.stop_price}')
@@ -91,7 +97,8 @@ def demo_orderbook():
                 price=price,
                 volume=volume,
                 order_type=OrderType.LIMIT,
-                time_in_force=OrderTIF.GTC
+                time_in_force=OrderTIF.GTC,
+                logger=logger
             )
         )
     
