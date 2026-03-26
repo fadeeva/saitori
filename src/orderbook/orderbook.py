@@ -5,87 +5,20 @@ from collections import defaultdict
 
 if TYPE_CHECKING:
     from .order import Order
+    from src.orderbook.ordersstack import OrdersStack
 
 from src.order import OrderType, OrderSide, OrderTIF
 from src.tradesbook import Trade, TradesBook
+from src.orderbook.ordersstack import AskOrders, BidOrders
 
 
-class Stack:
-    ''' Base class for limit and stop orders '''
-    
-    def __init__(self):
-        self._orders: List['Order'] = []
-    
-    def clear(self) -> None:
-        self._orders.clear()
-    
-    def __iter__(self) -> Iterator['Order']:
-        return iter(self._orders)
-    
-    def __reversed__(self):
-        for idx in range(len(self._orders)-1, -1, -1):
-            yield self._orders[idx]
-    
-    def __len__(self) -> int:
-        return len(self._orders)
-    
-    def show(self) -> List[dict]:
-        return [o.get() for o in self._orders]
-    
-    
-class OrdersStack(Stack):
-    '''Base class for price-sorted order containers (bids/asks).'''
-    
-    def __init__(self):
-        super().__init__()
-    
-    def peek(self) -> Optional['Order']:
-        return self._orders[-1] if self._orders else None
-    
-    def pop(self) -> None:
-        self._orders.pop()
-    
-    @property
-    def volume(self) -> Decimal:
-        return sum(o.volume for o in self._orders)
-    
-    def get_levels(self, depth: int=5) -> List[Tuple[Decimal, Decimal]]:
-        levels = defaultdict(Decimal)
-        for o in self._orders:
-            levels[o.price] += o.remaining_volume
-        
-        return list(levels.items())[:depth]
-    
-
-class StopOrdersStack(Stack):
-    '''Base class for stop orders.'''
-    
-    def __init__(self):
-        super().__init__()
+#class StopOrdersStack(Stack):
+#    '''Base class for stop orders.'''
+#    
+#    def __init__(self):
+#        super().__init__()
 
 
-class AskOrders(OrdersStack):
-    '''Ask orders sorted from lowest to highest price.'''
-    
-    def __init__(self):
-        super().__init__()
-    
-    def push(self, order: 'Order') -> None:
-        idx = bisect.bisect_right([-o.price for o in self._orders], -order.price)
-        self._orders.insert(idx, order)
-    
-
-class BidOrders(OrdersStack):
-    '''Bid orders sorted from highest to lowest price.'''
-    
-    def __init__(self):
-        super().__init__()
-    
-    def push(self, order: 'Order') -> None:
-        idx = bisect.bisect_right([o.price for o in self._orders], order.price)
-        self._orders.insert(idx, order)
-
-        
 class OrderBook:
     '''Order book matching bids and asks with price-time priority.'''
     
@@ -141,7 +74,7 @@ class OrderBook:
     
     def _execute_matched_orders(self,
                                 incoming: 'Order', existing: 'Order',
-                                same_side: OrdersStack, opposite_side: OrdersStack) -> None:
+                                same_side: 'OrdersStack', opposite_side: 'OrdersStack') -> None:
         
         volume = min(incoming.remaining_volume, existing.remaining_volume)
         price = existing.price
