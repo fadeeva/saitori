@@ -12,13 +12,6 @@ from src.tradesbook import Trade, TradesBook
 from src.orderbook.ordersstack import AskOrders, BidOrders
 
 
-#class StopOrdersStack(Stack):
-#    '''Base class for stop orders.'''
-#    
-#    def __init__(self):
-#        super().__init__()
-
-
 class OrderBook:
     '''Order book matching bids and asks with price-time priority.'''
     
