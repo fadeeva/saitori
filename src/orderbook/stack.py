@@ -1,4 +1,4 @@
-from typing import List, Iterator, TYPE_CHECKING
+from typing import List, Optional, Iterator, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .order import Order
@@ -12,6 +12,9 @@ class Stack:
     
     def clear(self) -> None:
         self._orders.clear()
+    
+    def peek(self) -> Optional['Order']:
+        return self._orders[-1] if self._orders else None
     
     def __iter__(self) -> Iterator['Order']:
         return iter(self._orders)

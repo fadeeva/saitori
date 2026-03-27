@@ -15,11 +15,11 @@ class OrdersStack(Stack):
     def __init__(self):
         super().__init__()
     
-    def peek(self) -> Optional['Order']:
-        return self._orders[-1] if self._orders else None
-    
     def pop(self) -> None:
         self._orders.pop()
+    
+    def push(self, order: 'Order') -> None:
+        raise NotImplementedError('Subclasses must implement push()')
     
     @property
     def volume(self) -> Decimal:
