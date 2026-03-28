@@ -14,6 +14,12 @@ class StopOrdersStack(Stack):
     
     def __init__(self):
         super().__init__()
+    
+    def push(self, order: 'Order') -> None:
+        raise NotImplementedError('Subclasses must implement push()')
+    
+    def get_activated(self, current_price: Decimal) -> List['Order']:
+        raise NotImplementedError('Subclasses must implement get_activated()')
         
 
 class AskStopOrders(StopOrdersStack):
@@ -21,6 +27,17 @@ class AskStopOrders(StopOrdersStack):
     
     def __init__(self):
         super().__init__()
+    
+    def get_activated(self, current_price: Decimal) -> List['Order']:
+        activated = []
+        for o in self._orders:
+            if current_price <= o.stop_price:
+                activated.append(o)
+                self._orders.remove(o)
+        return activated
+    
+    def push(self, order: 'Order') -> None:
+        pass
 
 
 class BidStopOrders(StopOrdersStack):
@@ -28,3 +45,17 @@ class BidStopOrders(StopOrdersStack):
     
     def __init__(self):
         super().__init__()
+        
+    def get_activated(self, current_price: Decimal) -> List['Order']:
+        activated = []
+        for o in self._orders[:]:
+            if current_price >= o.stop_price:
+                activated.append(o)
+                self._orders.remove(o)
+                
+        return activated
+    
+    def push(self, order: 'Order') -> None:
+        pass
+    
+    
