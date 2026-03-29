@@ -10,6 +10,7 @@ if TYPE_CHECKING:
 from src.order import OrderType, OrderSide, OrderTIF
 from src.tradesbook import Trade, TradesBook
 from src.orderbook.ordersstack import AskOrders, BidOrders
+from src.orderbook.stopordersstack import AskStopOrders, BidStopOrders
 
 
 class OrderBook:
@@ -18,6 +19,10 @@ class OrderBook:
     def __init__(self):
         self.asks = AskOrders()
         self.bids = BidOrders()
+        
+        self.stop_asks = AskStopOrders()
+        self.stop_bids = BidStopOrders()
+        
         self.trades_book = TradesBook()
         
         self.last_trade_price: Optional[Decimal] = None
