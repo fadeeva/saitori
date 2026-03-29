@@ -37,7 +37,8 @@ class AskStopOrders(StopOrdersStack):
         return activated
     
     def push(self, order: 'Order') -> None:
-        pass
+        idx = bisect.bisect_right([-o.price for o in self._orders], -order.stop_price)
+        self._orders.insert(idx, order)
 
 
 class BidStopOrders(StopOrdersStack):
@@ -56,6 +57,7 @@ class BidStopOrders(StopOrdersStack):
         return activated
     
     def push(self, order: 'Order') -> None:
-        pass
+        idx = bisect.bisect_right([o.price for o in self._orders], order.stop_price)
+        self._orders.insert(idx, order)
     
     
