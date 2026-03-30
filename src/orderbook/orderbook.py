@@ -29,6 +29,10 @@ class OrderBook:
     
     
     def add(self, order: 'Order') -> None:
+        if order.order_type == OrderType.STOP:
+            self._add_stop_order(order)
+            return
+        
         if order.side == OrderSide.ASK:
             opposite_side, same_side = self.bids, self.asks
         else:
@@ -81,7 +85,7 @@ class OrderBook:
         existing.execute(volume=volume, price=price)
         
         self.last_trade_price = price
-#        self._check_stop_orders()
+        self._check_stop_orders()
         
         self.trades_book.add(
             Trade(incoming, existing, incoming.side, price, volume)
@@ -90,8 +94,14 @@ class OrderBook:
         if existing.remaining_volume == 0:
             opposite_side.pop()
     
+    def _add_stop_order(self, order: 'Order'):
+        if order.side == OrderSide.ASK:
+            self.stop_asks.push(order)
+        else:
+            self.stop_bids.push(order)
     
-    def _check_stop_orders():
+    
+    def _check_stop_orders(self):
         pass
     
     def get_bid_levels(self, depth: int=5) -> List[Tuple[Decimal, Decimal]]:
