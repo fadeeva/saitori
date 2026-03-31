@@ -7,6 +7,7 @@ if TYPE_CHECKING:
     from .order import Order
 
 from src.orderbook.stack import Stack
+from src.order import OrderType
 
 
 class StopOrdersStack(Stack):
@@ -32,6 +33,7 @@ class AskStopOrders(StopOrdersStack):
         activated = []
         for o in self._orders:
             if current_price <= o.stop_price:
+                o.order_type = OrderType.LIMIT if o.price else OrderType.MARKET
                 activated.append(o)
                 self._orders.remove(o)
         return activated
@@ -51,6 +53,7 @@ class BidStopOrders(StopOrdersStack):
         activated = []
         for o in self._orders[:]:
             if current_price >= o.stop_price:
+                o.order_type = OrderType.LIMIT if o.price else OrderType.MARKET
                 activated.append(o)
                 self._orders.remove(o)
                 
