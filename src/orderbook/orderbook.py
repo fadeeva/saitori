@@ -101,8 +101,17 @@ class OrderBook:
             self.stop_bids.push(order)
     
     
-    def _check_stop_orders(self):
-        pass
+    def _check_stop_orders(self) -> None:
+        ask_activated_orders = self.stop_asks.get_activated(self.last_trade_price)
+        bid_activated_orders = self.stop_bids.get_activated(self.last_trade_price)
+        
+        for ao in ask_activated_orders:
+            self.add(ao)
+        
+        for bo in ask_activated_orders:
+            self.add(bo)
+        
+        
     
     def get_bid_levels(self, depth: int=5) -> List[Tuple[Decimal, Decimal]]:
         return self.bids.get_levels(depth)
