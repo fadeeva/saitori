@@ -32,7 +32,7 @@ class OrderBook:
         if order.order_type == OrderType.STOP:
             self._add_stop_order(order)
             return
-        
+    
         if order.side == OrderSide.ASK:
             opposite_side, same_side = self.bids, self.asks
         else:
@@ -105,12 +105,15 @@ class OrderBook:
         ask_activated_orders = self.stop_asks.get_activated(self.last_trade_price)
         bid_activated_orders = self.stop_bids.get_activated(self.last_trade_price)
         
-        for ao in ask_activated_orders:
-            self.add(ao)
+        if not ask_activated_orders and not bid_activated_orders:
+            return
         
-        for bo in ask_activated_orders:
-            self.add(bo)
+        ask_activated_orders.sort(key=lambda o: o.timestamp)
+        bid_activated_orders.sort(key=lambda o: o.timestamp)
         
+        for a in ask_activated_orders:
+            for b in bids_activated_orders:
+                pass
         
     
     def get_bid_levels(self, depth: int=5) -> List[Tuple[Decimal, Decimal]]:
@@ -123,6 +126,9 @@ class OrderBook:
     def clear(self) -> None:
         self.asks.clear()
         self.bids.clear()
+        
+        self.stop_asks.clear()
+        self.stop_bids.clear()
     
     
     @property
