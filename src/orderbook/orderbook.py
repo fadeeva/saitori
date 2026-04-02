@@ -108,12 +108,14 @@ class OrderBook:
         if not ask_activated_orders and not bid_activated_orders:
             return
         
-        ask_activated_orders.sort(key=lambda o: o.timestamp)
-        bid_activated_orders.sort(key=lambda o: o.timestamp)
+        all_activated_orders = ask_activated_orders + bid_activated_orders
         
-        for a in ask_activated_orders:
-            for b in bids_activated_orders:
-                pass
+        all_activated_orders.sort(key=lambda o: o.timestamp)
+        ask_activated_orders.sort(key=lambda o: o.price)
+        bid_activated_orders.sort(key=lambda o: -o.price)
+        
+        for o in all_activated_orders:
+            pass
         
     
     def get_bid_levels(self, depth: int=5) -> List[Tuple[Decimal, Decimal]]:
