@@ -1,9 +1,21 @@
-# Saitori. Order book simulator
+# Saitori. Exchange Simulator
 
-A complete order book simulator implementing the core mechanisms of a real trading system. The project includes:
-- **Matching engine** with price-time priority
-- **Support for multiple order types** (limit, market, stop)
-- **Time-in-force** (GTC, IOC, FOK)
-- **Order logging** with full lifecycle tracking
-- **Trades book** for recording all executions
-- **Aggregated market depth levels** for visualization
+**A complete exchange simulation engine** implementing core trading system mechanisms.
+
+## Core Systems
+- **Matching Engine** - Price-time priority with partial fills
+- **Order Logger** - Complete order lifecycle tracking
+- **Trades Book** - All executed trades with audit trail
+- **Market Depth** - Aggregated bid/ask levels for visualization
+
+## Order Types
+- **Limit orders** - Execute at specified price or better
+- **Market orders** - Immediate execution at best available price
+- **Stop orders** - Activate when market price reaches stop price
+  - Stop Limit - Becomes limit order after activation
+  - Stop Market - Becomes market order after activation
+
+## Time-in-Force
+- **GTC** (Good Till Cancelled) - Order lives until filled or cancelled
+- **IOC** (Immediate or Cancel) - Execute available portion, cancel remainder
+- **FOK** (Fill or Kill) - Execute fully or cancel entirely
