@@ -10,7 +10,6 @@ if TYPE_CHECKING:
 from src.order import OrderType, OrderSide, OrderTIF
 from src.tradesbook import Trade, TradesBook
 from src.orderbook.ordersstack import AskOrders, BidOrders
-from src.orderbook.stopordersstack import AskStopOrders, BidStopOrders
 
 
 class OrderBook:
@@ -20,19 +19,10 @@ class OrderBook:
         self.asks = AskOrders()
         self.bids = BidOrders()
         
-        self.stop_asks = AskStopOrders()
-        self.stop_bids = BidStopOrders()
-        
         self.trades_book = TradesBook()
-        
-        self.last_trade_price: Optional[Decimal] = None
     
     
     def add(self, order: 'Order') -> None:
-        if order.order_type == OrderType.STOP:
-            self._add_stop_order(order)
-            return
-    
         if order.side == OrderSide.ASK:
             opposite_side, same_side = self.bids, self.asks
         else:
@@ -84,38 +74,12 @@ class OrderBook:
         incoming.execute(volume=volume, price=price)
         existing.execute(volume=volume, price=price)
         
-        self.last_trade_price = price
-        self._check_stop_orders()
-        
         self.trades_book.add(
             Trade(incoming, existing, incoming.side, price, volume)
         )
         
         if existing.remaining_volume == 0:
             opposite_side.pop()
-    
-    def _add_stop_order(self, order: 'Order'):
-        if order.side == OrderSide.ASK:
-            self.stop_asks.push(order)
-        else:
-            self.stop_bids.push(order)
-    
-    
-    def _check_stop_orders(self) -> None:
-        ask_activated_orders = self.stop_asks.get_activated(self.last_trade_price)
-        bid_activated_orders = self.stop_bids.get_activated(self.last_trade_price)
-        
-        if not ask_activated_orders and not bid_activated_orders:
-            return
-        
-        all_activated_orders = ask_activated_orders + bid_activated_orders
-        
-        all_activated_orders.sort(key=lambda o: o.timestamp)
-        ask_activated_orders.sort(key=lambda o: o.price)
-        bid_activated_orders.sort(key=lambda o: -o.price)
-        
-        for o in all_activated_orders:
-            pass
         
     
     def get_bid_levels(self, depth: int=5) -> List[Tuple[Decimal, Decimal]]:
@@ -124,24 +88,17 @@ class OrderBook:
     def get_ask_levels(self, depth: int=5) -> List[Tuple[Decimal, Decimal]]:
         return self.asks.get_levels(depth)
     
-    
     def clear(self) -> None:
         self.asks.clear()
         self.bids.clear()
-        
-        self.stop_asks.clear()
-        self.stop_bids.clear()
-    
     
     @property
     def best_ask(self) -> Optional['Order']:
         return self.asks.peek()
     
-    
     @property
     def best_bid(self) -> Optional['Order']:
         return self.bids.peek()
-    
     
     @property
     def spread(self) -> Decimal:
@@ -150,7 +107,6 @@ class OrderBook:
     
     def __len__(self):
         return len(self.asks) + len(self.bids)
-    
     
     def __str__(self):
         r = [a.__str__() + ' || ' + b.__str__() + '\n' for a, b in zip(self.asks, self.bids)]
