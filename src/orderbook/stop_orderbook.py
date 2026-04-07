@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 from src.order import OrderSide, OrderTIF
 from src.tradesbook import Trade, TradesBook
-from src.orderbook.stopordersstack import AskStopOrders, BidStopOrders
+from src.orderbook.stop_orders_stack import AskStopOrders, BidStopOrders
 
 
 class StopOrderBook:

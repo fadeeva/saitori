@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from .order import Order
     from src.orderbook.ordersstack import OrdersStack
     from src.orderbook.ordersstack import StopOrdersStack
-    from src.orderbook.stopordersstack import AskStopOrders, BidStopOrders
+    from src.orderbook.stop_orders_stack import AskStopOrders, BidStopOrders
     from src.orderbook.ordersstack import AskOrders, BidOrders
 
 from src.order import OrderSide, OrderTIF
