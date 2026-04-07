@@ -5,11 +5,11 @@ from collections import defaultdict
 
 if TYPE_CHECKING:
     from .order import Order
-    from src.orderbook.ordersstack import OrdersStack
+    from src.orderbook.limit_orders_stack import OrdersStack
 
 from src.order import OrderSide, OrderTIF
 from src.tradesbook import Trade, TradesBook
-from src.orderbook.ordersstack import AskOrders, BidOrders
+from src.orderbook.limit_orders_stack import AskOrders, BidOrders
 
 
 class OrderBook:
