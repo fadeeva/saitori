@@ -8,7 +8,6 @@ if TYPE_CHECKING:
     from src.orderbook.limit_orders_stack import OrdersStack
 
 from src.order import OrderSide, OrderTIF
-from src.tradesbook import Trade, TradesBook
 from src.orderbook.limit_orders_stack import AskOrders, BidOrders
 
 
@@ -18,9 +17,6 @@ class OrderBook:
     def __init__(self):
         self.asks = AskOrders()
         self.bids = BidOrders()
-        
-        self.trades_book = TradesBook()
-    
     
     def add(self, order: 'Order') -> None:
         if order.side == OrderSide.ASK:
@@ -71,10 +67,6 @@ class OrderBook:
         
         incoming.execute(volume=volume, price=price)
         existing.execute(volume=volume, price=price)
-        
-        self.trades_book.add(
-            Trade(incoming, existing, incoming.side, price, volume)
-        )
         
         if existing.remaining_volume == 0:
             opposite_side.pop()
