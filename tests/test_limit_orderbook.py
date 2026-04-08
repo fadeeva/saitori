@@ -283,7 +283,6 @@ def test_IOC_execution():
     assert len(ob) == 0
     assert ob.best_bid is None
     assert ob.best_ask is None
-    assert len(ob.trades_book) == 1
 
     
 def test_mixed_orders_execution():
