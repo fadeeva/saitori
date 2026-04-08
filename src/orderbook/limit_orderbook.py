@@ -91,8 +91,11 @@ class OrderBook:
         return self.bids.peek()
     
     @property
-    def spread(self) -> Decimal:
-        return self.best_ask.price - self.best_bid.price
+    def spread(self) -> Optional[Decimal]:
+        if self.best_ask and self.best_bid:
+            return self.best_ask.price - self.best_bid.price
+        return None
+        
     
     
     def __len__(self):
