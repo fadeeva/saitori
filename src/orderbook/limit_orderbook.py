@@ -34,7 +34,7 @@ class OrderBook:
             while order.remaining_volume \
                   and opposite_side.peek() \
                   and self._best_or_equal(order, opposite_side.peek().price):
-                self._execute_matched_orders(order, opposite_side.peek(), same_side, opposite_side)
+                self._execute_matched_orders(order, opposite_side.peek(), opposite_side)
                 
         if order.remaining_volume > 0 and order.time_in_force not in [OrderTIF.IOC, OrderTIF.FOK]:
             same_side.push(order)
@@ -60,7 +60,7 @@ class OrderBook:
     
     def _execute_matched_orders(self,
                                 incoming: 'Order', existing: 'Order',
-                                same_side: 'OrdersStack', opposite_side: 'OrdersStack') -> None:
+                                opposite_side: 'OrdersStack') -> None:
         
         volume = min(incoming.remaining_volume, existing.remaining_volume)
         price = existing.price
@@ -96,8 +96,6 @@ class OrderBook:
             return self.best_ask.price - self.best_bid.price
         return None
         
-    
-    
     def __len__(self):
         return len(self.asks) + len(self.bids)
     
