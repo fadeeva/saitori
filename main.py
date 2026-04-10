@@ -2,7 +2,7 @@ from decimal import Decimal
 
 try:
     from src.order import Order, OrderStatus, OrderType, OrderSide, OrderTIF, OrderErrorMessages
-    from src.orderbook.orderbook import OrderBook
+    from src.orderbook.limit_orderbook import LimitOrderBook
     from src.orderlogger import *
     
     IMPORT_SUCCESS = True
@@ -72,7 +72,7 @@ def demo_create_orders():
 
 
 def demo_orderbook():
-    ob = OrderBook()
+    ob = LimitOrderBook()
     
     orders = [
         (OrderSide.ASK, Decimal('130.00'), Decimal(50)),
@@ -108,6 +108,8 @@ def demo_orderbook():
     print('*'*50)
     print(ob.best_ask.price, ob.best_bid.price)
     print(ob.spread)
+    print('*'*50)
+    print(ob)
 
 
 def main():
