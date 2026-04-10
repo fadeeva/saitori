@@ -13,7 +13,7 @@ from src.orderbook.limit_orders_stack import AskOrders, BidOrders
 from src.orderbook.matching_engine import MatchingEngine
 
 
-class OrderBook:
+class LimitOrderBook:
     '''Order book matching bids and asks with price-time priority.'''
     
     def __init__(self):        

@@ -27,7 +27,7 @@ def test_orderbook_creation():
         logger=logger
     )
 
-    ob = OrderBook()
+    ob = LimitOrderBook()
     ob.add(limit_buy)
     ob.add(limit_sell)
 
@@ -39,7 +39,7 @@ def test_orderbook_creation():
     
     
 def test_orderbook_execution():
-    ob = OrderBook()
+    ob = LimitOrderBook()
     
     orders = [
         (Decimal('120.00'), Decimal(50)),
@@ -78,7 +78,7 @@ def test_orderbook_execution():
     
     # ==================================================
     
-    ob = OrderBook()
+    ob = LimitOrderBook()
     
     orders = [
         (Decimal('100.00'), Decimal(5)),
@@ -117,7 +117,7 @@ def test_orderbook_execution():
     
     # ==================================================
     
-    ob = OrderBook()
+    ob = LimitOrderBook()
     
     orders = [
         (Decimal('100.00'), Decimal(5), OrderSide.ASK),
@@ -153,7 +153,7 @@ def test_orderbook_execution():
 
 
 def test_FOK_execution():
-    ob = OrderBook()
+    ob = LimitOrderBook()
     
     limit_buy = Order(
         side=OrderSide.BID,
@@ -182,7 +182,7 @@ def test_FOK_execution():
     
     # ==================================================
     
-    ob = OrderBook()
+    ob = LimitOrderBook()
     orders = [
         (Decimal('100.00'), Decimal(5)),
         (Decimal('105.00'), Decimal(10)),
@@ -219,7 +219,7 @@ def test_FOK_execution():
     
     # ==================================================
     
-    ob = OrderBook()
+    ob = LimitOrderBook()
     orders = [
         (Decimal('100.00'), Decimal(5)),
         (Decimal('105.00'), Decimal(10)),
@@ -256,7 +256,7 @@ def test_FOK_execution():
 
     
 def test_IOC_execution():
-    ob = OrderBook()
+    ob = LimitOrderBook()
     
     limit_sell = Order(
         side=OrderSide.ASK,
@@ -286,7 +286,7 @@ def test_IOC_execution():
 
     
 def test_mixed_orders_execution():
-    ob = OrderBook()
+    ob = LimitOrderBook()
     
     orders = [
         (OrderSide.ASK, Decimal('110.00'), Decimal(150), OrderTIF.GTC),
@@ -312,8 +312,8 @@ def test_mixed_orders_execution():
     assert ob.best_ask.remaining_volume == Decimal(60)
 
 
-def test_clear_orderbook():
-    ob = OrderBook()
+def test_clear_LimitOrderBook():
+    ob = LimitOrderBook()
     
     orders = [
         (Decimal('100.00'), Decimal(5)),
