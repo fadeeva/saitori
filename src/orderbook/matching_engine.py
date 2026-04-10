@@ -71,3 +71,7 @@ class MatchingEngine:
         
         if existing.remaining_volume == 0:
             opposite_side.pop()
+            
+    def clear(self) -> None:
+        self.asks.clear()
+        self.bids.clear()

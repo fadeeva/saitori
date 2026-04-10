@@ -29,8 +29,7 @@ class OrderBook:
         return self.me.asks.get_levels(depth)
     
     def clear(self) -> None:
-        self.me.asks.clear()
-        self.me.bids.clear()
+        self.me.clear()
     
     @property
     def best_ask(self) -> Optional['Order']:
