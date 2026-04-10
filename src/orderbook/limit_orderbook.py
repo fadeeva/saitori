@@ -3,6 +3,8 @@ from typing import Literal, List, Optional, Union, Dict, Tuple, Iterator, TYPE_C
 import bisect
 from collections import defaultdict
 
+from itertools import zip_longest
+
 if TYPE_CHECKING:
     from .order import Order
     from src.orderbook.limit_orders_stack import OrdersStack
@@ -14,7 +16,7 @@ from src.orderbook.matching_engine import MatchingEngine
 
 
 class LimitOrderBook:
-    '''Order book matching bids and asks with price-time priority.'''
+    '''Order book matching bids and asks with price-time priority for limit orders.'''
     
     def __init__(self):        
         self.me = MatchingEngine(AskOrders(), BidOrders())
@@ -49,7 +51,7 @@ class LimitOrderBook:
         return len(self.me.asks) + len(self.me.bids)
     
     def __str__(self):
-        r = [a.__str__() + ' || ' + b.__str__() + '\n' for a, b in zip(self.me.asks, self.me.bids)]
+        r = [str(a) + ' || ' + str(b) + '\n' for a, b in zip_longest(self.me.asks, self.me.bids)]
         return ''.join(r)
             
     
