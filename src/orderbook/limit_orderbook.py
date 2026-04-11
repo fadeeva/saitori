@@ -1,58 +1,38 @@
 from decimal import Decimal
-from typing import Literal, List, Optional, Union, Dict, Tuple, Iterator, TYPE_CHECKING
-import bisect
-from collections import defaultdict
-
-from itertools import zip_longest
+from typing import List, Optional, Tuple, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .order import Order
-    from src.orderbook.limit_orders_stack import OrdersStack
 
-from src.order import OrderSide, OrderTIF
 from src.orderbook.limit_orders_stack import AskOrders, BidOrders
+from src.orderbook.orderbook import OrderBook
 
-from src.orderbook.matching_engine import MatchingEngine
 
-
-class LimitOrderBook:
+class LimitOrderBook(OrderBook):
     '''Order book matching bids and asks with price-time priority for limit orders.'''
     
-    def __init__(self):        
-        self.me = MatchingEngine(AskOrders(), BidOrders())
-    
-    def add(self, order: 'Order') -> None:
-        self.me.add(order)
+    def __init__(self):
+        super().__init__(AskOrders(), BidOrders())
     
     def get_bid_levels(self, depth: int=5) -> List[Tuple[Decimal, Decimal]]:
-        return self.me.bids.get_levels(depth)
+        return self.bids.get_levels(depth)
     
     def get_ask_levels(self, depth: int=5) -> List[Tuple[Decimal, Decimal]]:
-        return self.me.asks.get_levels(depth)
-    
-    def clear(self) -> None:
-        self.me.clear()
+        return self.asks.get_levels(depth)
     
     @property
     def best_ask(self) -> Optional['Order']:
-        return self.me.asks.peek()
+        return self.asks.peek()
     
     @property
     def best_bid(self) -> Optional['Order']:
-        return self.me.bids.peek()
+        return self.bids.peek()
     
     @property
     def spread(self) -> Optional[Decimal]:
         if self.best_ask and self.best_bid:
             return self.best_ask.price - self.best_bid.price
         return None
-        
-    def __len__(self):
-        return len(self.me.asks) + len(self.me.bids)
-    
-    def __str__(self):
-        r = [str(a) + ' || ' + str(b) + '\n' for a, b in zip_longest(self.me.asks, self.me.bids)]
-        return ''.join(r)
             
     
 
