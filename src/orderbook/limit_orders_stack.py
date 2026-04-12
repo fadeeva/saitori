@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 from src.orderbook.stack import Stack
 
 
-class OrdersStack(Stack):
+class LimitOrdersStack(Stack):
     '''Base class for price-sorted order containers (bids/asks).'''
     
     def __init__(self):
@@ -33,7 +33,7 @@ class OrdersStack(Stack):
         return list(levels.items())[:depth]
 
 
-class AskOrders(OrdersStack):
+class AskOrders(LimitOrdersStack):
     '''Ask orders sorted from lowest to highest price.'''
     
     def __init__(self):
@@ -44,7 +44,7 @@ class AskOrders(OrdersStack):
         self._orders.insert(idx, order)
     
 
-class BidOrders(OrdersStack):
+class BidOrders(LimitOrdersStack):
     '''Bid orders sorted from highest to lowest price.'''
     
     def __init__(self):
