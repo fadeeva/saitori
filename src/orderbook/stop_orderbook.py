@@ -14,6 +14,7 @@ class StopOrderBook(OrderBook):
     
     def __init__(self):
         super().__init__(AskStopOrders(), BidStopOrders())
+        
         self.ask_storage = AskStopOrders()
         self.bid_storage = BidStopOrders()
     
@@ -27,6 +28,18 @@ class StopOrderBook(OrderBook):
         activated_asks = self.ask_storage.get_activated(current_price)
         activated_bids = self.bid_storage.get_activated(current_price)
         
-        # unite, sort by timestamp, add order by order to self.add()
+        activated_orders = activated_asks + activated_bids
+        activated_orders.sort(key=lambda o: o.timestamp)
+        
+        for o in activated_orders:
+            self.add(o)
+        
+        unexecuted_orders = self.asks + self.bids
+        
+        if unexecuted_orders:
+            self.clear()
+            return unexecuted_orders.sort(key=lambda o: o.timestamp)
+        
+            
             
     
