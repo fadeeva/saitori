@@ -15,11 +15,12 @@ from src.tradesbook import TradesBook
 
 class Exchange:
     def __init__(self):
-        self.limit_orderbook = LimitOrderBook()
-        self.stop_orderbook = StopOrderBook()
+        self.tradesbook = TradesBook()
+        
+        self.limit_orderbook = LimitOrderBook(self.tradesbook)
+        self.stop_orderbook = StopOrderBook(self.tradesbook)
         
         self.logger = OrderLogger()
-        self.tradesbook = TradesBook()
     
     def push(self, order: 'Order') -> None:
         if order.order_type == OrderType.LIMIT:

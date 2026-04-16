@@ -4,20 +4,25 @@ import bisect
 from collections import defaultdict
 
 if TYPE_CHECKING:
-    from .order import Order
+    from src.order import Order
+    from src.tradesbook import TradesBook
     from src.orderbook.stop_orders_stack import StopOrdersStack, AskStopOrders, BidStopOrders
     from src.orderbook.limit_orders_stack import OrdersStack, AskOrders, BidOrders
 
 from src.order import OrderSide, OrderTIF
+from src.tradesbook import Trade
 
 
 class MatchingEngine:
     
     def __init__(self,
                  asks: Union['AskOrders', 'AskStopOrders'],
-                 bids: Union['BidOrders', 'BidStopOrders']):
+                 bids: Union['BidOrders', 'BidStopOrders'],
+                 tradesbook: 'TradesBook'):
         self.asks = asks
         self.bids = bids
+        
+        self.tradesbook = tradesbook
     
     def add(self, order: 'Order') -> None:
         if order.side == OrderSide.ASK:
@@ -68,6 +73,10 @@ class MatchingEngine:
         
         incoming.execute(volume=volume, price=price)
         existing.execute(volume=volume, price=price)
+        
+        self.tradesbook.add(
+            Trade(incoming, existing, incoming.side, price, volume)
+        )
         
         if existing.remaining_volume == 0:
             opposite_side.pop()

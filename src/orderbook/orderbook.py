@@ -4,10 +4,11 @@ from typing import Union, List, TYPE_CHECKING
 from itertools import zip_longest
 
 if TYPE_CHECKING:
-    from .order import Order
+    from src.order import Order
+    from src.tradesbook import TradesBook
     from src.orderbook.stop_orders_stack import AskStopOrders, BidStopOrders
     from src.orderbook.limit_orders_stack import AskOrders, BidOrders
-
+    
 from src.orderbook.matching_engine import MatchingEngine
 
 
@@ -16,11 +17,12 @@ class OrderBook:
     
     def __init__(self,
                  asks: Union['AskOrders', 'AskStopOrders'],
-                 bids: Union['BidOrders', 'BidStopOrders']):
+                 bids: Union['BidOrders', 'BidStopOrders'],
+                 tradesbook: 'TradesBook'):
         
-        self.me = MatchingEngine(asks, bids)
+        self.me = MatchingEngine(asks, bids, tradesbook)
     
-    def add(self, order: 'Order') -> None:
+    def add(self, order: 'Order'):
         self.me.add(order)
     
     def clear(self) -> None:

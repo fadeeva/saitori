@@ -2,7 +2,8 @@ from decimal import Decimal
 from typing import List, Optional, Tuple, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .order import Order
+    from src.order import Order
+    from src.tradesbook import Tradesbook
 
 from src.orderbook.limit_orders_stack import AskOrders, BidOrders
 from src.orderbook.orderbook import OrderBook
@@ -11,8 +12,9 @@ from src.orderbook.orderbook import OrderBook
 class LimitOrderBook(OrderBook):
     '''Order book matching bids and asks with price-time priority for limit orders.'''
     
-    def __init__(self):
-        super().__init__(AskOrders(), BidOrders())
+    def __init__(self, tradesbook: 'Tradesbook'):
+        super().__init__(AskOrders(), BidOrders(), tradesbook)
+    
     
     def get_bid_levels(self, depth: int=5) -> List[Tuple[Decimal, Decimal]]:
         return self.bids.get_levels(depth)
