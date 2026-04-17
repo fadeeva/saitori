@@ -17,10 +17,9 @@ class OrderBook:
     
     def __init__(self,
                  asks: Union['AskOrders', 'AskStopOrders'],
-                 bids: Union['BidOrders', 'BidStopOrders'],
-                 tradesbook: 'TradesBook'):
+                 bids: Union['BidOrders', 'BidStopOrders']):
         
-        self.me = MatchingEngine(asks, bids, tradesbook)
+        self.me = MatchingEngine(asks, bids)
     
     def add(self, order: 'Order'):
         self.me.add(order)

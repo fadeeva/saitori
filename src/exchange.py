@@ -17,8 +17,8 @@ class Exchange:
     def __init__(self):
         self.tradesbook = TradesBook()
         
-        self.limit_orderbook = LimitOrderBook(self.tradesbook)
-        self.stop_orderbook = StopOrderBook(self.tradesbook)
+        self.limit_orderbook = LimitOrderBook()
+        self.stop_orderbook = StopOrderBook()
         
         self.logger = OrderLogger()
     
