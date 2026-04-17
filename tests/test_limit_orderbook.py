@@ -4,11 +4,9 @@ from datetime import datetime
 from src.order import *
 from src.orderbook.limit_orderbook import *
 from src.orderlogger import *
-from src.tradesbook import *
 
 
 logger = OrderLogger()
-tradebook = TradesBook()
 
 def test_orderbook_creation():
     limit_buy = Order(
@@ -29,7 +27,7 @@ def test_orderbook_creation():
         logger=logger
     )
 
-    ob = LimitOrderBook(tradebook)
+    ob = LimitOrderBook()
     ob.add(limit_buy)
     ob.add(limit_sell)
 
@@ -41,7 +39,7 @@ def test_orderbook_creation():
     
     
 def test_orderbook_execution():
-    ob = LimitOrderBook(tradebook)
+    ob = LimitOrderBook()
     
     orders = [
         (Decimal('120.00'), Decimal(50)),
@@ -80,7 +78,7 @@ def test_orderbook_execution():
     
     # ==================================================
     
-    ob = LimitOrderBook(tradebook)
+    ob = LimitOrderBook()
     
     orders = [
         (Decimal('100.00'), Decimal(5)),
@@ -119,7 +117,7 @@ def test_orderbook_execution():
     
     # ==================================================
     
-    ob = LimitOrderBook(tradebook)
+    ob = LimitOrderBook()
     
     orders = [
         (Decimal('100.00'), Decimal(5), OrderSide.ASK),
@@ -155,7 +153,7 @@ def test_orderbook_execution():
 
 
 def test_FOK_execution():
-    ob = LimitOrderBook(tradebook)
+    ob = LimitOrderBook()
     
     limit_buy = Order(
         side=OrderSide.BID,
@@ -184,7 +182,7 @@ def test_FOK_execution():
     
     # ==================================================
     
-    ob = LimitOrderBook(tradebook)
+    ob = LimitOrderBook()
     orders = [
         (Decimal('100.00'), Decimal(5)),
         (Decimal('105.00'), Decimal(10)),
@@ -221,7 +219,7 @@ def test_FOK_execution():
     
     # ==================================================
     
-    ob = LimitOrderBook(tradebook)
+    ob = LimitOrderBook()
     orders = [
         (Decimal('100.00'), Decimal(5)),
         (Decimal('105.00'), Decimal(10)),
@@ -258,7 +256,7 @@ def test_FOK_execution():
 
     
 def test_IOC_execution():
-    ob = LimitOrderBook(tradebook)
+    ob = LimitOrderBook()
     
     limit_sell = Order(
         side=OrderSide.ASK,
@@ -288,7 +286,7 @@ def test_IOC_execution():
 
     
 def test_mixed_orders_execution():
-    ob = LimitOrderBook(tradebook)
+    ob = LimitOrderBook()
     
     orders = [
         (OrderSide.ASK, Decimal('110.00'), Decimal(150), OrderTIF.GTC),
@@ -315,7 +313,7 @@ def test_mixed_orders_execution():
 
 
 def test_clear_LimitOrderBook():
-    ob = LimitOrderBook(tradebook)
+    ob = LimitOrderBook()
     
     orders = [
         (Decimal('100.00'), Decimal(5)),
