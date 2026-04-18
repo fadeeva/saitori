@@ -1,5 +1,5 @@
 from decimal import Decimal
-from typing import Literal, List, Optional, Union, Dict, Tuple, Iterator, TYPE_CHECKING
+from typing import Literal, List, Union, Dict, Tuple, Iterator, TYPE_CHECKING
 import bisect
 from collections import defaultdict
 
@@ -27,19 +27,23 @@ class MatchingEngine:
             opposite_side, same_side = self.asks, self.bids
         
         best_opposite = opposite_side.peek()
-
+        trades = []
+        
         if best_opposite:
             if order.time_in_force is OrderTIF.FOK and not self._is_enough_volume(order, opposite_side):
                 order.cancel()
                 return
-                
+            
             while order.remaining_volume \
                   and opposite_side.peek() \
                   and self._best_or_equal(order, opposite_side.peek().price):
-                self._execute_matched_orders(order, opposite_side.peek(), opposite_side)
+                trade = self._execute_matched_orders(order, opposite_side.peek(), opposite_side)
+                trades.append(trade)
                 
         if order.remaining_volume > 0 and order.time_in_force not in [OrderTIF.IOC, OrderTIF.FOK]:
             same_side.push(order)
+        
+        return trades
 
                 
     def _is_enough_volume(self, order: 'Order', opposite_side: List['Order']) -> bool:
@@ -62,7 +66,7 @@ class MatchingEngine:
     
     def _execute_matched_orders(self,
                                 incoming: 'Order', existing: 'Order',
-                                opposite_side: 'OrdersStack') -> Optional[Trade]:
+                                opposite_side: 'OrdersStack') -> Trade:
         
         volume = min(incoming.remaining_volume, existing.remaining_volume)
         price = existing.price
