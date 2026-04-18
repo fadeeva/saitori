@@ -24,7 +24,10 @@ class Exchange:
     
     def push(self, order: 'Order') -> None:
         if order.order_type == OrderType.LIMIT:
-            self.limit_orderbook.add(order)
+            trades = self.limit_orderbook.add(order)
+            if trades:
+                for trade in trades:
+                    self.tradesbook.add(trade)
         elif order.order_type == OrderType.STOP:
             self.stop_orderbook.add_to_storage(order)
         else:
