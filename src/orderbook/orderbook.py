@@ -1,10 +1,11 @@
 from decimal import Decimal
-from typing import Union, List, TYPE_CHECKING
+from typing import Union, List, Optional, TYPE_CHECKING
 
 from itertools import zip_longest
 
 if TYPE_CHECKING:
     from src.order import Order
+    from src.tradesbook import Trade
     from src.tradesbook import TradesBook
     from src.orderbook.stop_orders_stack import AskStopOrders, BidStopOrders
     from src.orderbook.limit_orders_stack import AskOrders, BidOrders
@@ -21,8 +22,8 @@ class OrderBook:
         
         self.me = MatchingEngine(asks, bids)
     
-    def add(self, order: 'Order'):
-        self.me.add(order)
+    def add(self, order: 'Order') -> List['Trade']:
+        return self.me.add(order)
     
     def clear(self) -> None:
         self.me.clear()
