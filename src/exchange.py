@@ -23,12 +23,15 @@ class Exchange:
         self.logger = OrderLogger()
     
     def push(self, order: 'Order') -> None:
+        trades = []
         if order.order_type == OrderType.LIMIT:
             trades = self.limit_orderbook.add(order)
-            if trades:
-                for trade in trades:
-                    self.tradesbook.add(trade)
         elif order.order_type == OrderType.STOP:
             self.stop_orderbook.add_to_storage(order)
         else:
             pass # MARKET
+        
+        if trades:
+            for trade in trades:
+                self.stop_orderbook.get_activated(trade.price) # ????
+                self.tradesbook.add(trade)
