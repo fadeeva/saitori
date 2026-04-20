@@ -20,7 +20,7 @@ class MatchingEngine:
         self.asks = asks
         self.bids = bids
     
-    def add(self, order: 'Order') -> None:
+    def add(self, order: 'Order', exchange=None) -> None:
         if order.side == OrderSide.ASK:
             opposite_side, same_side = self.bids, self.asks
         else:
@@ -37,7 +37,7 @@ class MatchingEngine:
             while order.remaining_volume \
                   and opposite_side.peek() \
                   and self._best_or_equal(order, opposite_side.peek().price):
-                trade = self._execute_matched_orders(order, opposite_side.peek(), opposite_side)
+                trade = self._execute_matched_orders(order, opposite_side.peek(), opposite_side, exchange)
                 trades.append(trade)
                 
         if order.remaining_volume > 0 and order.time_in_force not in [OrderTIF.IOC, OrderTIF.FOK]:
@@ -66,7 +66,7 @@ class MatchingEngine:
     
     def _execute_matched_orders(self,
                                 incoming: 'Order', existing: 'Order',
-                                opposite_side: 'OrdersStack') -> Trade:
+                                opposite_side: 'OrdersStack', exchange=None) -> Trade:
         
         volume = min(incoming.remaining_volume, existing.remaining_volume)
         price = existing.price
@@ -77,7 +77,11 @@ class MatchingEngine:
         if existing.remaining_volume == 0:
             opposite_side.pop()
         
-        return Trade(incoming, existing, incoming.side, price, volume)
+        trade = Trade(incoming, existing, incoming.side, price, volume)
+        if exchange:
+            exchange.check_stop_orders(trade)
+        
+        return trade
             
     def clear(self) -> None:
         self.asks.clear()

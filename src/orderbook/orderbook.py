@@ -22,8 +22,8 @@ class OrderBook:
         
         self.me = MatchingEngine(asks, bids)
     
-    def add(self, order: 'Order') -> List['Trade']:
-        return self.me.add(order)
+    def add(self, order: 'Order', exchange=None):
+        self.me.add(order, exchange)
     
     def clear(self) -> None:
         self.me.clear()
