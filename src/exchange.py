@@ -36,4 +36,7 @@ class Exchange:
                 self.tradesbook.add(trade)
                 
     def check_stop_orders(self, trade):
-        self.stop_orderbook.get_activated(trade.price)
+        orders = self.stop_orderbook.get_activated(trade.price)
+        if orders:
+            for o in orders:
+                self.push(o)
