@@ -4,6 +4,7 @@ from typing import Union, List, Optional, TYPE_CHECKING
 from itertools import zip_longest
 
 if TYPE_CHECKING:
+    from src.exchange import Exchange
     from src.order import Order
     from src.tradesbook import Trade
     from src.tradesbook import TradesBook
@@ -22,7 +23,7 @@ class OrderBook:
         
         self.me = MatchingEngine(asks, bids)
     
-    def add(self, order: 'Order', exchange=None):
+    def add(self, order: 'Order', exchange: 'Exchange'=None):
         self.me.add(order, exchange)
     
     def clear(self) -> None:

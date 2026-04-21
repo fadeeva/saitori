@@ -4,6 +4,7 @@ import bisect
 from collections import defaultdict
 
 if TYPE_CHECKING:
+    from src.exchange import Exchange
     from src.order import Order
     from src.orderbook.stop_orders_stack import StopOrdersStack, AskStopOrders, BidStopOrders
     from src.orderbook.limit_orders_stack import OrdersStack, AskOrders, BidOrders
@@ -20,7 +21,7 @@ class MatchingEngine:
         self.asks = asks
         self.bids = bids
     
-    def add(self, order: 'Order', exchange=None) -> None:
+    def add(self, order: 'Order', exchange: 'Exchange'=None) -> None:
         if order.side == OrderSide.ASK:
             opposite_side, same_side = self.bids, self.asks
         else:
@@ -66,7 +67,7 @@ class MatchingEngine:
     
     def _execute_matched_orders(self,
                                 incoming: 'Order', existing: 'Order',
-                                opposite_side: 'OrdersStack', exchange=None) -> Trade:
+                                opposite_side: 'OrdersStack', exchange: 'Exchange'=None) -> Trade:
         
         volume = min(incoming.remaining_volume, existing.remaining_volume)
         price = existing.price
