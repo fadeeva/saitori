@@ -15,18 +15,18 @@ class StopOrderBook(OrderBook):
     def __init__(self):
         super().__init__(AskStopOrders(), BidStopOrders())
         
-        self.ask_storage = AskStopOrders()
-        self.bid_storage = BidStopOrders()
+        self._ask_storage = AskStopOrders()
+        self._bid_storage = BidStopOrders()
     
     def add_to_storage(self, order: 'Order') -> None:
         if order.side == OrderSide.ASK:
-            self.ask_storage.push(order)
+            self._ask_storage.push(order)
         else:
-            self.bid_storage.push(order)
+            self._bid_storage.push(order)
     
     def get_activated(self, current_price: Decimal) -> Optional[List['Order']]:
-        activated_asks = self.ask_storage.get_activated(current_price)
-        activated_bids = self.bid_storage.get_activated(current_price)
+        activated_asks = self._ask_storage.get_activated(current_price)
+        activated_bids = self._bid_storage.get_activated(current_price)
         
         activated_orders = activated_asks + activated_bids
         activated_orders.sort(key=lambda o: o.timestamp)
@@ -39,6 +39,18 @@ class StopOrderBook(OrderBook):
         if unexecuted_orders:
             self.clear()
             return unexecuted_orders.sort(key=lambda o: o.timestamp)
+    
+    @property
+    def storage_len(self) -> int:
+        return len(self._ask_storage) + len(self._bid_storage)
+    
+    @property
+    def ask_storage(self) -> List['Orders']:
+        return self._ask_storage
+    
+    @property
+    def bid_storage(self) -> List['Orders']:
+        return self._bid_storage
         
             
             
