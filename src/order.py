@@ -88,7 +88,7 @@ class Order:
         
         if order_type==OrderType.MARKET:
             self.price = None
-        elif order_type in [OrderType.LIMIT, OrderType.STOP] and price is None:
+        elif order_type==OrderType.LIMIT and price is None:
             raise ValueError(
                 OrderErrorMessages.PRICE_REQUIRED.format(order_type=order_type)
             )
