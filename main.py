@@ -3,6 +3,7 @@ from decimal import Decimal
 try:
     from src.order import Order, OrderStatus, OrderType, OrderSide, OrderTIF, OrderErrorMessages
     from src.orderbook.limit_orderbook import LimitOrderBook
+    from src.orderbook.stop_orderbook import StopOrderBook
     from src.orderlogger import *
     
     IMPORT_SUCCESS = True
@@ -75,43 +76,39 @@ def demo_orderbook():
     ob = LimitOrderBook()
     
     orders = [
-        (OrderSide.ASK, Decimal('130.00'), Decimal(50)),
-        (OrderSide.ASK, Decimal('130.00'), Decimal(30)),
-        (OrderSide.ASK, Decimal('120.00'), Decimal(20)),
-        (OrderSide.ASK, Decimal('120.00'), Decimal(50)),
         (OrderSide.ASK, Decimal('100.00'), Decimal(30)),
         (OrderSide.ASK, Decimal('100.00'), Decimal(20)),
+        (OrderSide.ASK, Decimal('100.00'), Decimal(20)),
+        (OrderSide.ASK, Decimal('100.00'), Decimal(20)),
+        (OrderSide.ASK, Decimal('100.00'), Decimal(20)),
         
-        (OrderSide.BID, Decimal('120.00'), Decimal(50)),
-        (OrderSide.BID, Decimal('120.00'), Decimal(30)),
-        (OrderSide.BID, Decimal('120.00'), Decimal(20)),
-        (OrderSide.BID, Decimal('110.00'), Decimal(50)),
-        (OrderSide.BID, Decimal('110.00'), Decimal(30)),
-        (OrderSide.BID, Decimal('100.00'), Decimal(20)),
+#        (OrderSide.BID, Decimal('120.00'), Decimal(50)),
+#        (OrderSide.BID, Decimal('120.00'), Decimal(30)),
+#        (OrderSide.BID, Decimal('120.00'), Decimal(20)),
+#        (OrderSide.BID, Decimal('110.00'), Decimal(50)),
+#        (OrderSide.BID, Decimal('110.00'), Decimal(30)),
+#        (OrderSide.BID, Decimal('100.00'), Decimal(20)),
     ]
     
-    for side, price, volume in orders:
-        ob.add(
+    ob = StopOrderBook()
+    
+    for _ in range(5):
+        ob.add_to_storage(
             Order(
-                side=side,
-                price=price,
-                volume=volume,
-                order_type=OrderType.LIMIT,
+                side=OrderSide.ASK,
+                stop_price=Decimal('100.00'),
+                volume=Decimal('20'),
+                order_type=OrderType.STOP,
                 time_in_force=OrderTIF.GTC,
                 logger=logger
             )
         )
-    
-    print(ob.get_bid_levels())
-    print('*'*50)
-    print(ob.get_ask_levels())
-    print('*'*50)
-    print(ob.best_ask.price, ob.best_bid.price)
-    print(ob.spread)
-    print('*'*50)
-    print(ob)
 
-
+    print(ob.storage_len)
+    ob.get_activated(Decimal('100.00'))
+    for o in ob.ask_storage:
+        print(o)
+        
 def main():
     if not IMPORT_SUCCESS:
         print('FAILED to import modules (((')
