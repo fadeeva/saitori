@@ -33,6 +33,25 @@ def test_orderbook_creation():
     ob.add_to_storage(stop_sell)
 
     assert ob.storage_len == 2
+
+def test_orders_activation():
+    ob = StopOrderBook()
+    
+    for _ in range(5):
+        ob.add_to_storage(
+            Order(
+                side=OrderSide.ASK,
+                stop_price=Decimal('100.00'),
+                volume=Decimal('20'),
+                order_type=OrderType.STOP,
+                time_in_force=OrderTIF.GTC,
+                logger=logger
+            )
+        )
+
+    assert ob.storage_len == 5
+    assert ob.get_activated(Decimal('100.00')) is None
+    assert ob.storage_len == 0
     
     
 
