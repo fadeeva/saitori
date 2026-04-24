@@ -31,7 +31,7 @@ class AskStopOrders(StopOrdersStack):
     
     def get_activated(self, current_price: Decimal) -> List['Order']:
         activated = []
-        for o in self._orders:
+        for o in self._orders[:]:
             if current_price <= o.stop_price:
                 o.order_type = OrderType.LIMIT if o.price else OrderType.MARKET
                 activated.append(o)
@@ -39,7 +39,7 @@ class AskStopOrders(StopOrdersStack):
         return activated
     
     def push(self, order: 'Order') -> None:
-        idx = bisect.bisect_right([-o.price for o in self._orders], -order.stop_price)
+        idx = bisect.bisect_right([-o.stop_price for o in self._orders], -order.stop_price)
         self._orders.insert(idx, order)
 
 
@@ -60,7 +60,7 @@ class BidStopOrders(StopOrdersStack):
         return activated
     
     def push(self, order: 'Order') -> None:
-        idx = bisect.bisect_right([o.price for o in self._orders], order.stop_price)
+        idx = bisect.bisect_right([o.stop_price for o in self._orders], order.stop_price)
         self._orders.insert(idx, order)
     
     
