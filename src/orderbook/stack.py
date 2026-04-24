@@ -26,5 +26,8 @@ class Stack:
     def __len__(self) -> int:
         return len(self._orders)
     
+    def __add__(self, stack: 'Stack') -> List['Orders']:
+        return self._orders + stack._orders
+    
     def show(self) -> List[dict]:
         return [o.get() for o in self._orders]
