@@ -38,7 +38,9 @@ class StopOrderBook(OrderBook):
         
         if unexecuted_orders:
             self.clear()
-            return unexecuted_orders.sort(key=lambda o: o.timestamp)
+            unexecuted_orders.sort(key=lambda o: o.timestamp)
+        
+        return unexecuted_orders
     
     @property
     def storage_len(self) -> int:
