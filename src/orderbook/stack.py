@@ -16,6 +16,9 @@ class Stack:
     def peek(self) -> Optional['Order']:
         return self._orders[-1] if self._orders else None
     
+    def pop(self) -> None:
+        self._orders.pop()
+    
     def __iter__(self) -> Iterator['Order']:
         return iter(self._orders)
     

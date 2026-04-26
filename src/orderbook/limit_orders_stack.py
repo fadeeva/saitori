@@ -15,9 +15,6 @@ class LimitOrdersStack(Stack):
     def __init__(self):
         super().__init__()
     
-    def pop(self) -> None:
-        self._orders.pop()
-    
     def push(self, order: 'Order') -> None:
         raise NotImplementedError('Subclasses must implement push()')
     
