@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from src.orderbook.stop_orders_stack import StopOrdersStack, AskStopOrders, BidStopOrders
     from src.orderbook.limit_orders_stack import OrdersStack, AskOrders, BidOrders
 
-from src.order import OrderSide, OrderTIF
+from src.order import OrderType, OrderSide, OrderTIF
 from src.tradesbook import Trade
 
 
@@ -59,6 +59,8 @@ class MatchingEngine:
     
     
     def _best_or_equal(self, order: 'Order', opposite_price: Decimal) -> bool:
+        if order.order_type == OrderType.MARKET: return True
+        
         if order.side == OrderSide.ASK:
             return order.price <= opposite_price
         else:
