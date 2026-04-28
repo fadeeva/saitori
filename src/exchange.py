@@ -38,3 +38,6 @@ class Exchange:
         if orders:
             for o in orders:
                 self.push(o)
+                
+    def status(self):
+        return True
